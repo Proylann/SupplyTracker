@@ -24,14 +24,40 @@
         android:paddingEnd="12dp"
         android:textColorHint="#0B0B0B"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/Fullname" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="serif"
+        android:text="Sign Up"
+        android:textColor="#0B5614"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/StudentNumber"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.196"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="224dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="64dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.522"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo" />
 
     <EditText
         android:id="@+id/Password"
         android:layout_width="250dp"
         android:layout_height="52dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/textfield_border"
         android:drawableStart="@drawable/ic_lock_icon"
         android:drawablePadding="15dp"
@@ -46,62 +72,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/StudentNumber" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="224dp"
-        android:layout_height="220dp"
-        android:layout_marginTop="28dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.514"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo" />
-
-    <TextView
-        android:id="@+id/loginNav"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="Click Here"
-        android:textColor="#0640A9"
-        android:textColorLink="#0256E4"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/btnSubmit" />
-
-    <EditText
-        android:id="@+id/Fullname"
-        android:layout_width="250dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="36dp"
-        android:background="@drawable/textfield_border"
-        android:drawableStart="@drawable/ic_person_icon"
-        android:drawablePadding="15dp"
-        android:ems="10"
-        android:hint="Enter Fullname"
-        android:inputType="text"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="#050505"
-        android:textColorHint="#0B0B0B"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:fontFamily="serif"
-        android:text="Sign In"
-        android:textColor="#0B5614"
-        android:textSize="22sp"
-        app:layout_constraintBottom_toTopOf="@+id/Fullname"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.191"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <Button
         android:id="@+id/btnSubmit"
         android:layout_width="251dp"
@@ -109,33 +79,34 @@
         android:layout_marginTop="12dp"
         android:backgroundTint="#0B5614"
         android:text="Register"
-        android:textColor="#FFFCFC"
-        android:textColorLink="#FFFCFC"
+        android:textColorLink="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Department" />
-
-    <Spinner
-        android:id="@+id/Department"
-        style="@android:style/Widget.Material.Light.Spinner.Underlined"
-        android:layout_width="250dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="4dp"
-        android:spinnerMode="dropdown"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Password" />
+
+    <TextView
+        android:id="@+id/loginNav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:text="Click Here"
+        android:textColor="#0640A9"
+        android:textColorLink="#0256E4"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubmit" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Already have an Account?"
-        android:textColor="@color/black"
+        android:layout_marginTop="12dp"
+        android:text="Doesn't have an Account?"
+        android:textColor="#050505"
+        android:textColorLink="#050505"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.315"
+        app:layout_constraintHorizontal_bias="0.313"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnSubmit" />
 
