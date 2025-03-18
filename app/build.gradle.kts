@@ -38,6 +38,8 @@ android {
 }
 
 dependencies {
+
+    implementation(libs.logging.interceptor)
     implementation(libs.imageslideshow)
     implementation(libs.converter.gson)
     implementation(libs.okhttp)

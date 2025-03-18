@@ -1,4 +1,4 @@
-package com.example.upang_supply_tracker
+package com.example.upang_supply_tracker.Adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.upang_supply_tracker.R
+import com.example.upang_supply_tracker.dataclass.SupplyItem
 
 class SupplyAdapter(
     private val context: Context,

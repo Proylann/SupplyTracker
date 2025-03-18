@@ -9,17 +9,50 @@
         android:id="@+id/navigation_home"
         android:name="com.example.upang_supply_tracker.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+
+        <!-- Action should be nested inside the fragment -->
+
+        <action
+            android:id="@+id/action_navigation_home_to_uniforms"
+            app:destination="@id/uniforms" />
+
+        <action
+            android:id="@+id/action_navigation_home_to_books"
+            app:destination="@id/books" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.upang_supply_tracker.ui.dashboard.DashboardFragment"
+        android:name="com.example.upang_supply_tracker.ui.cart.CartFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_cart" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.upang_supply_tracker.ui.notifications.NotificationsFragment"
+        android:name="com.example.upang_supply_tracker.ui.profile.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/uniforms"
+        android:name="com.example.upang_supply_tracker.fragments.Uniforms"
+        android:label="Uniforms"
+        tools:layout="@layout/fragment_uniforms" />
+
+    <fragment
+        android:id="@+id/books"
+        android:name="com.example.upang_supply_tracker.fragments.Books"
+        android:label="Books"
+        tools:layout="@layout/fragment_books">
+
+        <!-- Add a back action to return to home -->
+        <action
+            android:id="@+id/action_uniforms_to_navigation_home"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/navigation_home"
+            app:popUpToInclusive="true" />
+    </fragment>
+
 </navigation>

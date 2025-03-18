@@ -1,10 +1,11 @@
-package com.example.upang_supply_tracker
+package com.example.upang_supply_tracker.Adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.upang_supply_tracker.R
 
 class SliderAdapter(private val images: List<Int>) :
 RecyclerView.Adapter<SliderAdapter.SliderViewHolder>() {

@@ -1,4 +1,4 @@
-package com.example.upang_supply_tracker
+package com.example.upang_supply_tracker.dataclass
 
 data class SupplyItem(
     val id: Int,
