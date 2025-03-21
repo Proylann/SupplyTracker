@@ -126,6 +126,10 @@ class CartService private constructor(context: Context) {
         sharedPreferences.edit().putString(KEY_STUDENT_NUMBER, studentNumber).apply()
     }
 
+    fun getStudentNumber(): String? {
+        return sharedPreferences.getString(KEY_STUDENT_NUMBER, null)
+    }
+
     private fun saveCart() {
         // Convert cart items to JSON string
         val jsonCartItems = gson.toJson(cartItems)

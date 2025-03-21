@@ -8,8 +8,8 @@
     android:layout_marginVertical="6dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="@color/stroke_light">
+    app:strokeColor="@color/stroke_light"
+    app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -20,12 +20,14 @@
             android:id="@+id/uniformImage"
             android:layout_width="80dp"
             android:layout_height="120dp"
+            android:layout_marginStart="4dp"
             android:contentDescription="Uniform image"
             android:scaleType="centerCrop"
             android:src="@drawable/uniform_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/uniformName"
@@ -34,11 +36,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
+            android:fontFamily="/poppins_medium"
             android:maxLines="2"
             android:text="PE Uniform"
             android:textColor="@color/text_primary"
             android:textSize="16sp"
-            android:fontFamily="/poppins_medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/uniformImage"
             app:layout_constraintTop_toTopOf="parent" />
@@ -48,10 +50,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:fontFamily="poppins_regular"
             android:text="Official physical education uniform"
             android:textColor="@color/text_secondary"
             android:textSize="14sp"
-            android:fontFamily="poppins_regular"
             app:layout_constraintEnd_toEndOf="@+id/uniformName"
             app:layout_constraintStart_toStartOf="@+id/uniformName"
             app:layout_constraintTop_toBottomOf="@+id/uniformName" />
@@ -61,10 +63,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:fontFamily="poppins_regular"
             android:text="Department: Physical Education"
             android:textColor="@color/text_secondary"
             android:textSize="14sp"
-            android:fontFamily="poppins_regular"
             app:layout_constraintEnd_toEndOf="@+id/uniformDescription"
             app:layout_constraintStart_toStartOf="@+id/uniformDescription"
             app:layout_constraintTop_toBottomOf="@+id/uniformDescription" />
@@ -87,9 +89,10 @@
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="4dp"
             app:dividerColor="@color/divider"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/uniformName"
             app:layout_constraintTop_toBottomOf="@+id/quantity" />
 
@@ -97,7 +100,7 @@
             android:id="@+id/reserveButton"
             style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="228dp"
-            android:layout_height="38dp"
+            android:layout_height="39dp"
             android:layout_marginTop="4dp"
             android:text="Add to Cart"
             android:textSize="14sp"
@@ -106,7 +109,7 @@
             app:iconGravity="textStart"
             app:iconSize="18dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.8"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/uniformImage"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 

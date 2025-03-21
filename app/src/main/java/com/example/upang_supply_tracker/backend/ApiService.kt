@@ -12,6 +12,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
@@ -22,12 +23,19 @@ interface ApiService {
 
     @POST("login.php")
     fun loginUser(@Body student: Student): Call<ResponseBody>
-    
+
+
+    @GET("getStudent.php")
+    fun getStudentProfile(@Query("student_number") studentNumber: String): Call<ResponseBody>
+
+
     @GET("mobile_fetch_department.php")
     fun getDepartments(): Call<List<Department>>
 
     @GET("mobile_fetch_course.php")
     fun getCourse(@Query("department_id") departmentId: String): Call<List<Course>>
+
+
 
     @GET("mobile_fetch_books.php")
     fun getBooks(): Call<BookResponse>

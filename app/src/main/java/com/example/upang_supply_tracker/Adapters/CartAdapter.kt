@@ -26,9 +26,6 @@ class CartAdapter(
         val cartItemName: TextView = view.findViewById(R.id.cartItemName)
         val cartItemDescription: TextView = view.findViewById(R.id.cartItemDescription)
         val cartItemDepartment: TextView = view.findViewById(R.id.cartItemDepartment)
-        val quantityText: TextView = view.findViewById(R.id.quantityText)
-        val btnDecrease: ImageButton = view.findViewById(R.id.btnDecrease)
-        val btnIncrease: ImageButton = view.findViewById(R.id.btnIncrease)
         val btnRemove: ImageButton = view.findViewById(R.id.btnRemove)
     }
 
@@ -52,7 +49,7 @@ class CartAdapter(
         }
         holder.cartItemDepartment.text = departmentText
 
-        holder.quantityText.text = item.quantity.toString()
+
 
         // Set the default icon based on item type
         when (item.itemType) {
@@ -73,15 +70,6 @@ class CartAdapter(
         }
 
         // Set button click listeners
-        holder.btnDecrease.setOnClickListener {
-            if (item.quantity > 1) {
-                onQuantityChange(item.itemId, item.quantity - 1)
-            }
-        }
-
-        holder.btnIncrease.setOnClickListener {
-            onQuantityChange(item.itemId, item.quantity + 1)
-        }
 
         holder.btnRemove.setOnClickListener {
             onRemoveClick(item.itemId)

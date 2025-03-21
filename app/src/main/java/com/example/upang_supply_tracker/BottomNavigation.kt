@@ -48,10 +48,9 @@ class BottomNavigation : AppCompatActivity() {
                         if (navController.currentDestination?.id == R.id.uniforms) {
                             navController.navigate(R.id.action_uniforms_to_navigation_home)
                         } else if(navController.currentDestination?.id == R.id.books){
-                            navController.navigate(R.id.action_uniforms_to_navigation_home)
+
                         }
                         else {
-                            // Otherwise, navigate directly to home
                             navController.navigate(R.id.navigation_home)
                         }
                     }
