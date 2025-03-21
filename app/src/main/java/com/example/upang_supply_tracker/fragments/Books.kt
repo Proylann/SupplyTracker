@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.upang_supply_tracker.R
-import com.example.upang_supply_tracker.adapters.BookRecyclerAdapter
+import com.example.upang_supply_tracker.Adapters.BookRecyclerAdapter
 import com.example.upang_supply_tracker.backend.ApiService
 import com.example.upang_supply_tracker.backend.RetrofitClient
 import com.example.upang_supply_tracker.dataclass.Books

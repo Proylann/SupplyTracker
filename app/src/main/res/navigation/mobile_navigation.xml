@@ -21,6 +21,11 @@
             android:id="@+id/action_navigation_home_to_books"
             app:destination="@id/books" />
 
+
+        <action
+            android:id="@+id/action_navigation_home_to_modules"
+            app:destination="@id/modules" />
+
     </fragment>
 
     <fragment
@@ -45,7 +50,14 @@
         android:id="@+id/books"
         android:name="com.example.upang_supply_tracker.fragments.Books"
         android:label="Books"
-        tools:layout="@layout/fragment_books">
+        tools:layout="@layout/fragment_books"/>
+
+
+    <fragment
+        android:id="@+id/modules"
+        android:name="com.example.upang_supply_tracker.fragments.Modules"
+        android:label="Books"
+        tools:layout="@layout/fragment_modules">
 
         <!-- Add a back action to return to home -->
         <action

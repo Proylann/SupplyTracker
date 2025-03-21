@@ -48,7 +48,8 @@ class HomeFragment : Fragment() {
         }
 
         binding.modulesCard.setOnClickListener {
-            // Navigate to Modules fragment when implemented
+            findNavController().navigate(R.id.action_navigation_home_to_modules)
+
         }
     }
 

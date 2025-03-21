@@ -9,7 +9,7 @@
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
     app:strokeWidth="1dp"
-        app:strokeColor="@color/stroke_light">
+    app:strokeColor="@color/stroke_light">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,58 +17,71 @@
         android:padding="12dp">
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/bookImage"
+            android:id="@+id/uniformImage"
             android:layout_width="80dp"
             android:layout_height="120dp"
-            android:contentDescription="Book cover"
+            android:contentDescription="Uniform image"
             android:scaleType="centerCrop"
-            android:src="@drawable/books"
+            android:src="@drawable/uniform_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
-            android:id="@+id/bookTitle"
+            android:id="@+id/uniformName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="Fundamentals of Computer Science"
+            android:text="PE Uniform"
             android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:fontFamily="/poppins_medium"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/bookImage"
+            app:layout_constraintStart_toEndOf="@+id/uniformImage"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/departmentCourse"
+            android:id="@+id/uniformDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Computer Science - CS101"
+            android:text="Official physical education uniform"
             android:textColor="@color/text_secondary"
             android:textSize="14sp"
             android:fontFamily="poppins_regular"
-            app:layout_constraintEnd_toEndOf="@+id/bookTitle"
-            app:layout_constraintStart_toStartOf="@+id/bookTitle"
-            app:layout_constraintTop_toBottomOf="@+id/bookTitle" />
+            app:layout_constraintEnd_toEndOf="@+id/uniformName"
+            app:layout_constraintStart_toStartOf="@+id/uniformName"
+            app:layout_constraintTop_toBottomOf="@+id/uniformName" />
+
+        <TextView
+            android:id="@+id/uniformDepartment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Department: Physical Education"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:fontFamily="poppins_regular"
+            app:layout_constraintEnd_toEndOf="@+id/uniformDescription"
+            app:layout_constraintStart_toStartOf="@+id/uniformDescription"
+            app:layout_constraintTop_toBottomOf="@+id/uniformDescription" />
 
         <com.google.android.material.chip.Chip
-            android:id="@+id/availabilityChip"
+            android:id="@+id/quantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="5 copies available"
+            android:text="Quantity: 25"
             android:textColor="@color/success_text"
             android:textSize="12sp"
             app:chipBackgroundColor="@color/success_bg"
             app:chipIcon="@drawable/ic_check_circle"
             app:chipIconTint="@color/success_icon"
-            app:layout_constraintStart_toStartOf="@+id/departmentCourse"
-            app:layout_constraintTop_toBottomOf="@+id/departmentCourse" />
+            app:layout_constraintStart_toStartOf="@+id/uniformDepartment"
+            app:layout_constraintTop_toBottomOf="@+id/uniformDepartment" />
 
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/divider"
@@ -77,22 +90,24 @@
             android:layout_marginTop="12dp"
             app:dividerColor="@color/divider"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/bookTitle"
-            app:layout_constraintTop_toBottomOf="@+id/availabilityChip" />
+            app:layout_constraintStart_toStartOf="@+id/uniformName"
+            app:layout_constraintTop_toBottomOf="@+id/quantity" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/reserveButton"
             style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="230dp"
-            android:layout_height="44dp"
-            android:layout_marginTop="8dp"
-            android:text="Add to Cart"
+            android:layout_width="228dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="4dp"
+            android:text="Reserve"
             android:textSize="14sp"
             app:backgroundTint="@color/button_primary"
             app:cornerRadius="8dp"
             app:iconGravity="textStart"
             app:iconSize="18dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.8"
+            app:layout_constraintStart_toEndOf="@+id/uniformImage"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,6 +21,14 @@
       </SelectionState>
       <SelectionState runConfigName="Login (1)">
         <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-03-20T11:09:48.404933300Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=R5CT44F3DSZ" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="BottomNavigation">
         <option name="selectionMode" value="DROPDOWN" />

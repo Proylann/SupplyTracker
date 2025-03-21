@@ -4,4 +4,29 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#a9a9a9</color>
     <color name="active">#0B5614</color>
+
+    <color name="text_primary">#212121</color>
+
+
+    <color name="text_secondary">#757575</color>
+
+
+    <color name="success_text">#2E7D32</color>
+    <color name="success_bg">#E8F5E9</color>
+    <color name="success_icon">#4CAF50</color>
+    <color name="divider">#BDBDBD</color>
+
+
+    <color name="stroke_light">#E0E0E0</color>
+
+
+    <color name="button_primary">#0277BD</color>
+    <color name="button_primary_pressed">#01579B</color>
+
+
+    <color name="background_light">#FAFAFA</color>
+    <color name="background_dark">#121212</color>
+
+
+    <color name="icon_tint">#616161</color>
 </resources>

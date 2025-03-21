@@ -78,19 +78,22 @@
     </androidx.cardview.widget.CardView>
 
     <!-- Books list -->
+
+    <!-- Loading indicator -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/booksRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="325dp"
+        android:layout_height="453dp"
         android:layout_marginTop="16dp"
         android:clipToPadding="false"
         android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.52"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchCardView" />
+        app:layout_constraintTop_toBottomOf="@+id/searchCardView"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <!-- Loading indicator -->
     <ProgressBar
         android:id="@+id/loadingProgressBar"
         android:layout_width="wrap_content"

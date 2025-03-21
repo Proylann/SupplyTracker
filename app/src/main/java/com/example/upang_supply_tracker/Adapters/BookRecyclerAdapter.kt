@@ -1,4 +1,4 @@
-package com.example.upang_supply_tracker.adapters
+package com.example.upang_supply_tracker.Adapters
 
 import android.content.Context
 import android.graphics.BitmapFactory
@@ -23,7 +23,7 @@ class BookRecyclerAdapter(
         val bookImage: ImageView = view.findViewById(R.id.bookImage)
         val bookTitle: TextView = view.findViewById(R.id.bookTitle)
         val departmentCourse: TextView = view.findViewById(R.id.departmentCourse)
-        val bookAvailability: TextView = view.findViewById(R.id.bookAvailability)
+        val bookAvailability: TextView = view.findViewById(R.id.availabilityChip)
         val reserveButton: Button = view.findViewById(R.id.reserveButton)
     }
 

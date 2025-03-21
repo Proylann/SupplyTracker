@@ -1,5 +1,6 @@
 package com.example.upang_supply_tracker.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -193,6 +194,10 @@ class MainActivity : AppCompatActivity() {
                     etPassword.text.clear()
                     spDepartment.setSelection(0)
                     spCourse.visibility = View.GONE
+
+                    val intent = Intent(this@MainActivity, Login::class.java)
+                    startActivity(intent)
+
                 } else {
                     Log.e("API_ERROR", "Error Code: ${response.code()} - ${response.message()}")
                     Toast.makeText(this@MainActivity, "Server Error: ${response.code()}", Toast.LENGTH_SHORT).show()
