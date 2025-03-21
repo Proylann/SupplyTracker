@@ -7,8 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.upang_supply_tracker.R
+import com.example.upang_supply_tracker.Services.CartService
+import com.example.upang_supply_tracker.models.CartItem
 import com.example.upang_supply_tracker.models.Uniform
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
@@ -17,6 +20,8 @@ class UniformAdapter(
     private var uniforms: List<Uniform> = emptyList(),
     private val onItemClick: (Uniform) -> Unit
 ) : RecyclerView.Adapter<UniformAdapter.UniformViewHolder>() {
+
+    private val cartService = CartService.getInstance()
 
     class UniformViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val uniformImage: ImageView = view.findViewById(R.id.uniformImage)
@@ -66,8 +71,34 @@ class UniformAdapter(
             holder.uniformImage.setImageResource(R.drawable.uniform_icon)
         }
 
-        // Set button click listener
+        // Change button text to "Add to Cart" instead of "Reserve"
+        holder.reserveButton.text = "Add to Cart"
+
+        // Set button click listener - now adds to cart
         holder.reserveButton.setOnClickListener {
+            // Create a CartItem from the Uniform
+            val cartItem = CartItem(
+                itemId = uniform.uniformId,
+                name = uniform.name,
+                description = uniform.description,
+                departmentName = uniform.departmentName,
+                courseName = uniform.courseName,
+                img = uniform.img,
+                quantity = 1, // Default quantity is 1
+                itemType = "UNIFORM" // Set the item type to UNIFORM
+            )
+
+            // Add the CartItem to cart
+            cartService.addToCart(cartItem)
+
+            // Show a toast notification
+            Toast.makeText(
+                holder.itemView.context,
+                "${uniform.name} added to cart",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            // Also call the original onItemClick if needed
             onItemClick(uniform)
         }
 

@@ -9,10 +9,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.upang_supply_tracker.BottomNavigation
 import com.example.upang_supply_tracker.R
+import com.example.upang_supply_tracker.Services.CartService
 import com.example.upang_supply_tracker.backend.ApiService
 import com.example.upang_supply_tracker.backend.RetrofitClient
 import com.example.upang_supply_tracker.dataclass.Student
-import com.example.upang_supply_tracker.ui.home.HomeFragment
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -28,6 +28,9 @@ class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        // Initialize CartService with application context
+        CartService.initialize(applicationContext)
 
         // Initialize UI elements
         studentNumberEditText = findViewById(R.id.StudentNumber)
@@ -89,6 +92,9 @@ class Login : AppCompatActivity() {
                         val message = jsonResponse.optString("message", "")
 
                         if (success) {
+                            // Save student number in CartService
+                            CartService.getInstance().saveStudentNumber(loginStudent.studentNumber)
+
                             Toast.makeText(
                                 this@Login,
                                 "Login successful!",

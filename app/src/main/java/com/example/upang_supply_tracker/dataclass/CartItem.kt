@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class CartItem(
-    @SerializedName("uniformId")
-    val uniformId: Int,
+    @SerializedName("itemId")
+    val itemId: Int,
 
     @SerializedName("name")
     val name: String,
@@ -23,5 +23,8 @@ data class CartItem(
     val img: String?,
 
     @SerializedName("quantity")
-    var quantity: Int = 1
+    var quantity: Int = 1,
+
+    @SerializedName("itemType")
+    val itemType: String  // "BOOK", "UNIFORM", or "MODULE"
 ) : Serializable

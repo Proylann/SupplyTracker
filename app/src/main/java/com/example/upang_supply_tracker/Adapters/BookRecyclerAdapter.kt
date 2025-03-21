@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.upang_supply_tracker.R
+import com.example.upang_supply_tracker.Services.CartService
 import com.example.upang_supply_tracker.dataclass.Books
 
 class BookRecyclerAdapter(
@@ -18,6 +20,8 @@ class BookRecyclerAdapter(
     private val books: List<Books>,
     private val onItemClick: (Books) -> Unit
 ) : RecyclerView.Adapter<BookRecyclerAdapter.BookViewHolder>() {
+
+    private val cartService = CartService.getInstance()
 
     class BookViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val bookImage: ImageView = view.findViewById(R.id.bookImage)
@@ -72,9 +76,10 @@ class BookRecyclerAdapter(
         // Set click listeners
         holder.itemView.setOnClickListener { onItemClick(currentBook) }
         holder.reserveButton.setOnClickListener {
-            // Handle reservation
+            // Handle reservation/add to cart
             if (currentBook.Quantity > 0) {
-                onItemClick(currentBook)
+                cartService.addBookToCart(currentBook)
+                Toast.makeText(context, "${currentBook.BookTitle} added to cart", Toast.LENGTH_SHORT).show()
             }
         }
     }

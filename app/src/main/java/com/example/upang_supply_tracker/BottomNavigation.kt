@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.example.upang_supply_tracker.Services.CartService
 import com.example.upang_supply_tracker.databinding.ActivityBottomNavigationBinding
 
 class BottomNavigation : AppCompatActivity() {
@@ -17,6 +18,7 @@ class BottomNavigation : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() // Hides the default ActionBar
+        CartService.initialize(applicationContext)
 
         binding = ActivityBottomNavigationBinding.inflate(layoutInflater)
         setContentView(binding.root)

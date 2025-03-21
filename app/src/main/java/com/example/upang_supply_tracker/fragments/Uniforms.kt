@@ -54,8 +54,8 @@ class Uniforms : Fragment() {
         // Setup RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(context)
         uniformAdapter = UniformAdapter(emptyList()) { uniform ->
-            // Handle uniform item click (reservation)
-            handleUniformReservation(uniform)
+            // This is called when the "Add to Cart" button is clicked
+            // The actual adding to cart is now handled in the adapter
         }
         recyclerView.adapter = uniformAdapter
 
@@ -125,15 +125,6 @@ class Uniforms : Fragment() {
                 showError("Network error: ${t.message}")
             }
         })
-    }
-
-    private fun handleUniformReservation(uniform: Uniform) {
-        // Here you would implement the reservation logic
-        // For now, just show a toast
-        Toast.makeText(context, "Requesting to reserve: ${uniform.name}", Toast.LENGTH_SHORT).show()
-
-        // You could navigate to a reservation form fragment and pass the uniform data
-        // Or implement your reservation API call here
     }
 
     private fun updateUniformsList(uniforms: List<Uniform>) {

@@ -18,7 +18,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainActivity : AppCompatActivity() {
+class Register : AppCompatActivity() {
     private lateinit var etFullname: EditText
     private lateinit var etStudentNumber: EditText
     private lateinit var etPassword: EditText
@@ -99,13 +99,13 @@ class MainActivity : AppCompatActivity() {
                     departmentAdapter.notifyDataSetChanged()
                 } else {
                     Log.e("API_ERROR", "Failed to load departments")
-                    Toast.makeText(this@MainActivity, "Failed to load departments", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@Register, "Failed to load departments", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<List<Department>>, t: Throwable) {
                 Log.e("API_ERROR", "Network Error: ${t.message}")
-                Toast.makeText(this@MainActivity, "Network error fetching departments", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@Register, "Network error fetching departments", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
                     courseAdapter.add("Select Course")
                     courseAdapter.add("Failed to load courses")
                     courseAdapter.notifyDataSetChanged()
-                    Toast.makeText(this@MainActivity, "Failed to load courses", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@Register, "Failed to load courses", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                 courseAdapter.add("Select Course")
                 courseAdapter.add("Network error")
                 courseAdapter.notifyDataSetChanged()
-                Toast.makeText(this@MainActivity, "Network error fetching courses", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@Register, "Network error fetching courses", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         apiService.createStudent(student).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@MainActivity, "Student added successfully!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@Register, "Student added successfully!", Toast.LENGTH_SHORT).show()
                     // Reset form fields
                     etFullname.text.clear()
                     etStudentNumber.text.clear()
@@ -195,18 +195,18 @@ class MainActivity : AppCompatActivity() {
                     spDepartment.setSelection(0)
                     spCourse.visibility = View.GONE
 
-                    val intent = Intent(this@MainActivity, Login::class.java)
+                    val intent = Intent(this@Register, Login::class.java)
                     startActivity(intent)
 
                 } else {
                     Log.e("API_ERROR", "Error Code: ${response.code()} - ${response.message()}")
-                    Toast.makeText(this@MainActivity, "Server Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@Register, "Server Error: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Log.e("API_ERROR", "Network Failure: ${t.message}")
-                Toast.makeText(this@MainActivity, "Failed to connect to server", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@Register, "Failed to connect to server", Toast.LENGTH_SHORT).show()
             }
         })
     }

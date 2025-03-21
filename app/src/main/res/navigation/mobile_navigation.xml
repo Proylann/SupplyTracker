@@ -36,9 +36,9 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.upang_supply_tracker.ui.profile.NotificationsFragment"
+        android:name="com.example.upang_supply_tracker.ui.profile.Profile"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/uniforms"

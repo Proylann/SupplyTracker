@@ -11,101 +11,96 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.upang_supply_tracker.R
 import com.example.upang_supply_tracker.models.CartItem
-import com.google.android.material.imageview.ShapeableImageView
 
 class CartAdapter(
-    private val onQuantityChange: (uniformId: Int, quantity: Int) -> Unit,
-    private val onRemoveClick: (uniformId: Int) -> Unit
+    private val onQuantityChange: (Int, Int) -> Unit,
+    private val onRemoveClick: (Int) -> Unit
 ) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
-    private var cartItems: List<CartItem> = emptyList()
+    private var items: List<CartItem> = emptyList()
     private var filteredItems: List<CartItem> = emptyList()
     private var currentFilter: String = "All"
 
     class CartViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val itemImage: ShapeableImageView = view.findViewById(R.id.cartItemImage)
-        val itemName: TextView = view.findViewById(R.id.cartItemName)
-        val itemDescription: TextView = view.findViewById(R.id.cartItemDescription)
-        val itemDepartment: TextView = view.findViewById(R.id.cartItemDepartment)
-        val itemQuantity: TextView = view.findViewById(R.id.quantityText)
-        val btnIncrease: ImageButton = view.findViewById(R.id.btnIncrease)
+        val cartItemImage: ImageView = view.findViewById(R.id.cartItemImage)
+        val cartItemName: TextView = view.findViewById(R.id.cartItemName)
+        val cartItemDescription: TextView = view.findViewById(R.id.cartItemDescription)
+        val cartItemDepartment: TextView = view.findViewById(R.id.cartItemDepartment)
+        val quantityText: TextView = view.findViewById(R.id.quantityText)
         val btnDecrease: ImageButton = view.findViewById(R.id.btnDecrease)
+        val btnIncrease: ImageButton = view.findViewById(R.id.btnIncrease)
         val btnRemove: ImageButton = view.findViewById(R.id.btnRemove)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_cart, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_cart, parent, false)
         return CartViewHolder(view)
     }
 
+    override fun getItemCount(): Int = filteredItems.size
+
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
-        val cartItem = filteredItems[position]
+        val item = filteredItems[position]
 
-        // Set text values
-        holder.itemName.text = cartItem.name
-        holder.itemDescription.text = cartItem.description
+        holder.cartItemName.text = item.name
+        holder.cartItemDescription.text = item.description
 
-        // Set department and course info
-        val departmentInfo = if (cartItem.courseName != null) {
-            "Department: ${cartItem.departmentName}\nCourse: ${cartItem.courseName}"
+        val departmentText = if (item.courseName != null && item.courseName.isNotEmpty()) {
+            "Department: ${item.departmentName} - ${item.courseName}"
         } else {
-            "Department: ${cartItem.departmentName}"
+            "Department: ${item.departmentName}"
         }
-        holder.itemDepartment.text = departmentInfo
+        holder.cartItemDepartment.text = departmentText
 
-        // Set quantity
-        holder.itemQuantity.text = cartItem.quantity.toString()
+        holder.quantityText.text = item.quantity.toString()
 
-        // Set image if available
-        if (!cartItem.img.isNullOrEmpty()) {
+        // Set the default icon based on item type
+        when (item.itemType) {
+            "BOOK" -> holder.cartItemImage.setImageResource(R.drawable.books)
+            "UNIFORM" -> holder.cartItemImage.setImageResource(R.drawable.uniform_icon)
+            else -> holder.cartItemImage.setImageResource(R.drawable.module_icon) // Assuming you have a module icon
+        }
+
+        // Try to load image if available
+        if (!item.img.isNullOrEmpty()) {
             try {
-                val imageBytes = Base64.decode(cartItem.img, Base64.DEFAULT)
+                val imageBytes = Base64.decode(item.img, Base64.DEFAULT)
                 val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                holder.itemImage.setImageBitmap(decodedImage)
+                holder.cartItemImage.setImageBitmap(decodedImage)
             } catch (e: Exception) {
-                // If there's an error decoding the image, use the default
-                holder.itemImage.setImageResource(R.drawable.uniform_icon)
+                // Keep default image if decoding fails
             }
-        } else {
-            // No image, use default
-            holder.itemImage.setImageResource(R.drawable.uniform_icon)
         }
 
         // Set button click listeners
-        holder.btnIncrease.setOnClickListener {
-            onQuantityChange(cartItem.uniformId, cartItem.quantity + 1)
-        }
-
         holder.btnDecrease.setOnClickListener {
-            if (cartItem.quantity > 1) {
-                onQuantityChange(cartItem.uniformId, cartItem.quantity - 1)
+            if (item.quantity > 1) {
+                onQuantityChange(item.itemId, item.quantity - 1)
             }
         }
 
+        holder.btnIncrease.setOnClickListener {
+            onQuantityChange(item.itemId, item.quantity + 1)
+        }
+
         holder.btnRemove.setOnClickListener {
-            onRemoveClick(cartItem.uniformId)
+            onRemoveClick(item.itemId)
         }
     }
 
-    override fun getItemCount() = filteredItems.size
-
-    fun updateData(newCartItems: List<CartItem>) {
-        cartItems = newCartItems
+    fun updateData(newItems: List<CartItem>) {
+        items = newItems
         applyFilter(currentFilter)
-        notifyDataSetChanged()
     }
 
     fun applyFilter(filter: String) {
         currentFilter = filter
-
         filteredItems = when (filter) {
-            "Books" -> cartItems.filter { it.name.contains("Book", ignoreCase = true) }
-            "Uniforms" -> cartItems.filter { it.name.contains("Uniform", ignoreCase = true) }
-            "Modules" -> cartItems.filter { it.name.contains("Module", ignoreCase = true) }
-            else -> cartItems  // "All" or any other value
+            "Books" -> items.filter { it.itemType == "BOOK" }
+            "Uniforms" -> items.filter { it.itemType == "UNIFORM" }
+            "Modules" -> items.filter { it.itemType == "MODULE" }
+            else -> items
         }
-
         notifyDataSetChanged()
     }
 }

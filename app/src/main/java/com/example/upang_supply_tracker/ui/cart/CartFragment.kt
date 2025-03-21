@@ -38,8 +38,7 @@ class CartFragment : Fragment() {
         setupObservers()
         setupListeners()
 
-        // Load dummy data for demonstration
-        loadDummyData()
+        // Removed loadDummyData() since we're now using real data from CartService
 
         return root
     }
@@ -112,40 +111,6 @@ class CartFragment : Fragment() {
             cartViewModel.clearCart()
             Snackbar.make(binding.root, "Cart cleared", Snackbar.LENGTH_SHORT).show()
         }
-    }
-
-    private fun loadDummyData() {
-        val dummyItems = listOf(
-            CartItem(
-                uniformId = 1,
-                name = "PE Uniform",
-                description = "Official physical education uniform",
-                departmentName = "Physical Education",
-                courseName = null,
-                img = null,
-                quantity = 1
-            ),
-            CartItem(
-                uniformId = 2,
-                name = "Chemistry Lab Module",
-                description = "Laboratory workbook for Chemistry 101",
-                departmentName = "Chemistry",
-                courseName = "CHEM 101",
-                img = null,
-                quantity = 1
-            ),
-            CartItem(
-                uniformId = 3,
-                name = "Programming Textbook",
-                description = "Introduction to Java Programming",
-                departmentName = "Computer Science",
-                courseName = "CS 101",
-                img = null,
-                quantity = 1
-            )
-        )
-
-        cartViewModel.setCartItems(dummyItems)
     }
 
     override fun onDestroyView() {

@@ -99,7 +99,7 @@
             android:layout_width="228dp"
             android:layout_height="38dp"
             android:layout_marginTop="4dp"
-            android:text="Reserve"
+            android:text="Add to Cart"
             android:textSize="14sp"
             app:backgroundTint="@color/button_primary"
             app:cornerRadius="8dp"
