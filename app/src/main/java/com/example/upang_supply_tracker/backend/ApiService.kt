@@ -1,6 +1,5 @@
 package com.example.upang_supply_tracker.backend
 
-
 import com.example.upang_supply_tracker.dataclass.BookResponse
 import com.example.upang_supply_tracker.dataclass.Course
 import com.example.upang_supply_tracker.dataclass.Department
@@ -53,4 +52,7 @@ interface ApiService {
 
     @POST("setReservation.php")
     suspend fun submitReservation(@Body request: ReservationRequest): Response<ReservationResponse>
+
+    @GET("getReservation.php")
+    fun getReservations(@Query("StudentNumber") studentNumber: String): Call<ResponseBody>
 }

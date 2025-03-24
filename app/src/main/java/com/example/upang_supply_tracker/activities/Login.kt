@@ -75,11 +75,9 @@ class Login : AppCompatActivity() {
     private fun loginUser(loginStudent: Student) {
         submitButton.isEnabled = false
 
-        // Get API service instance
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
-
-        // Make API call using loginUser method
         val call = apiService.loginUser(loginStudent)
+
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 submitButton.isEnabled = true
@@ -93,61 +91,64 @@ class Login : AppCompatActivity() {
                         val message = jsonResponse.optString("message", "")
 
                         if (success) {
-                            // Save student number in CartService if needed
-                            CartService.getInstance().saveStudentNumber(loginStudent.studentNumber)
+                            val studentData = jsonResponse.optJSONObject("student")
+                            if (studentData != null) {
+                                val fullName = studentData.optString("FullName", "")
+                                val studentNumber = studentData.optString("StudentNumber", "")
+                                val departmentID = studentData.optString("DepartmentID", "")
+                                val courseID = studentData.optString("CourseID", "")
 
-                            // Initialize UserManager
-                            UserManager.initialize(applicationContext)
-                            val userManager = UserManager.getInstance()
+                                // Create a proper Student object with complete data
+                                val loggedInStudent = Student(
+                                    fullName = fullName,
+                                    studentNumber = studentNumber,
+                                    password = loginStudent.password, // Keep the entered password
+                                    departmentID = departmentID,
+                                    courseID = courseID
+                                )
 
-                            // Login with the Student object directly
-                            userManager.login(loginStudent)
+                                // Save student number in CartService
+                                CartService.getInstance().saveStudentNumber(loggedInStudent.studentNumber)
 
-                            Toast.makeText(
-                                this@Login,
-                                "Login successful!",
-                                Toast.LENGTH_LONG
-                            ).show()
+                                // Initialize UserManager
+                                UserManager.initialize(applicationContext)
+                                val userManager = UserManager.getInstance()
 
+                                // Store the complete user details
+                                userManager.login(loggedInStudent)
 
+                                Log.d("LoginSuccess", "Logged in student: $loggedInStudent")
 
-                            // Navigate to main activity
-                            val intent = Intent(this@Login, BottomNavigation::class.java)
-                            startActivity(intent)
-                            finish()
+                                Toast.makeText(
+                                    this@Login,
+                                    "Login successful!",
+                                    Toast.LENGTH_LONG
+                                ).show()
+
+                                // Navigate to main activity
+                                val intent = Intent(this@Login, BottomNavigation::class.java)
+                                startActivity(intent)
+                                finish()
+                            } else {
+                                Toast.makeText(this@Login, "Student data not found.", Toast.LENGTH_LONG).show()
+                            }
                         } else {
-                            Toast.makeText(
-                                this@Login,
-                                message.ifEmpty { "Invalid credentials" },
-                                Toast.LENGTH_LONG
-                            ).show()
+                            Toast.makeText(this@Login, message.ifEmpty { "Incorrect Student Number or Password" }, Toast.LENGTH_LONG).show()
                         }
                     } catch (e: Exception) {
                         Log.e("LOGIN_ERROR", "Parse error: ${e.message}")
-                        Toast.makeText(
-                            this@Login,
-                            "Error processing response. Please try again.",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toast.makeText(this@Login, "Error processing response. Please try again.", Toast.LENGTH_LONG).show()
                     }
                 } else {
                     Log.e("LOGIN_ERROR", "Error: ${response.code()}")
-                    Toast.makeText(
-                        this@Login,
-                        "Login failed. Please try again.",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(this@Login, "Login failed. Please try again.", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 submitButton.isEnabled = true
                 Log.e("LOGIN_ERROR", "Failure: ${t.message}")
-                Toast.makeText(
-                    this@Login,
-                    "Network error. Please check your connection.",
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(this@Login, "Network error. Please check your connection.", Toast.LENGTH_LONG).show()
             }
         })
     }

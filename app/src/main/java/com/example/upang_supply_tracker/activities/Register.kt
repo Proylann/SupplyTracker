@@ -2,6 +2,7 @@ package com.example.upang_supply_tracker.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -22,6 +23,7 @@ class Register : AppCompatActivity() {
     private lateinit var etFullname: EditText
     private lateinit var etStudentNumber: EditText
     private lateinit var etPassword: EditText
+    private lateinit var etConfirmPassword: EditText
     private lateinit var spDepartment: Spinner
     private lateinit var spCourse: Spinner
     private lateinit var btnSubmit: Button
@@ -30,6 +32,10 @@ class Register : AppCompatActivity() {
     private lateinit var courseList: MutableList<Course>
     private lateinit var courseAdapter: ArrayAdapter<String>
 
+    private lateinit var togglePassword: ImageButton
+    private lateinit var togglePassword2: ImageButton
+    private var isPasswordVisible = false
+    private var isConfirmPasswordVisible = false
     private val apiService = RetrofitClient.instance.create(ApiService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,9 +46,24 @@ class Register : AppCompatActivity() {
         etFullname = findViewById(R.id.Fullname)
         etStudentNumber = findViewById(R.id.StudentNumber)
         etPassword = findViewById(R.id.Password)
+        etConfirmPassword = findViewById(R.id.ConfirmPassword)
         spDepartment = findViewById(R.id.Department)
         spCourse = findViewById(R.id.Course)
         btnSubmit = findViewById(R.id.btnSubmit)
+        togglePassword = findViewById(R.id.togglePassword)
+        togglePassword2 = findViewById(R.id.togglePassword2)
+
+        togglePassword.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            togglePasswordVisibility(etPassword, isPasswordVisible, togglePassword)
+        }
+
+        togglePassword2.setOnClickListener {
+            isConfirmPasswordVisible = !isConfirmPasswordVisible
+            togglePasswordVisibility(etConfirmPassword, isConfirmPasswordVisible, togglePassword2)
+        }
+
+
 
         // Initialize department spinner
         departmentList = mutableListOf()
@@ -83,6 +104,20 @@ class Register : AppCompatActivity() {
             submitData()
         }
     }
+
+    private fun togglePasswordVisibility(editText: EditText, isVisible: Boolean, button: ImageButton) {
+        if (isVisible) {
+            editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            button.setImageResource(R.drawable.ice_eye)
+        } else {
+            editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            button.setImageResource(R.drawable.ice_eye)
+        }
+        editText.setSelection(editText.text.length)
+    }
+
+
+
 
     private fun fetchDepartments() {
         apiService.getDepartments().enqueue(object : Callback<List<Department>> {

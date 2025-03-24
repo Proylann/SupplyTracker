@@ -102,7 +102,7 @@
         android:id="@+id/cartContentLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -152,8 +152,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Clear Cart"
-                    android:textColor="#CF0000"
+                    android:textColor="#FFFFFF"
                     android:textSize="12sp"
+                    app:backgroundTint="#A90A0A"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -229,27 +230,28 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:padding="16dp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/summaryButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="290dp"
+                    android:layout_height="49dp"
+                    android:layout_marginBottom="8dp"
                     android:text="View Order Summary"
                     android:textAllCaps="false"
-                    app:backgroundTint="@color/button_primary"
+                    app:backgroundTint="@color/button"
                     app:cornerRadius="8dp"
                     app:layout_constraintBottom_toTopOf="@+id/checkoutButton"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginBottom="8dp" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/checkoutButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:text="Submit Reservation"
                     android:textAllCaps="false"
                     app:backgroundTint="@color/button_primary"

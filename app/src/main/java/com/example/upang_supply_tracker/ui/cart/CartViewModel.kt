@@ -46,7 +46,6 @@ class CartViewModel : ViewModel() {
             return
         }
 
-        // Get the current user
         val currentStudent = userManager.getCurrentUser()
         if (currentStudent == null) {
             _reservationStatus.value = "User not logged in"
@@ -56,22 +55,22 @@ class CartViewModel : ViewModel() {
         _isLoading.value = true
 
         viewModelScope.launch {
-            // Pass the student number directly
             val result = reservationService.submitReservation(currentStudent.studentNumber, items)
 
             if (result.isSuccess) {
                 val response = result.getOrNull()
                 if (response?.success == true) {
-                    _reservationStatus.value = "Reservation submitted successfully"
-                    clearCart() // Only clear cart on success
+                    _reservationStatus.postValue("Reservation submitted successfully")
+                    clearCart()
                 } else {
-                    _reservationStatus.value = "Error: ${response?.message ?: "Unknown error"}"
+                    _reservationStatus.postValue("Error: ${response?.message ?: "Unknown error"}")
                 }
             } else {
-                _reservationStatus.value = "Network error: ${result.exceptionOrNull()?.message ?: "Unknown error"}"
+                _reservationStatus.postValue("Network error: ${result.exceptionOrNull()?.message ?: "Unknown error"}")
+                Log.e("CheckoutError", result.exceptionOrNull()?.message ?: "Unknown error")
             }
 
-            _isLoading.value = false
+            _isLoading.postValue(false)
         }
     }
 }

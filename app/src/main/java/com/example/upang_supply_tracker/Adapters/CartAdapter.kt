@@ -5,6 +5,7 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -26,7 +27,7 @@ class CartAdapter(
         val cartItemName: TextView = view.findViewById(R.id.cartItemName)
         val cartItemDescription: TextView = view.findViewById(R.id.cartItemDescription)
         val cartItemDepartment: TextView = view.findViewById(R.id.cartItemDepartment)
-        val btnRemove: ImageButton = view.findViewById(R.id.btnRemove)
+        val btnRemove: Button = view.findViewById(R.id.btnRemove)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
@@ -35,6 +36,7 @@ class CartAdapter(
     }
 
     override fun getItemCount(): Int = filteredItems.size
+
 
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
         val item = filteredItems[position]
@@ -75,6 +77,9 @@ class CartAdapter(
             onRemoveClick(item.itemId)
         }
     }
+
+
+
 
     fun updateData(newItems: List<CartItem>) {
         items = newItems

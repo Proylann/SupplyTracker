@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    tools:context=".ui.profile.Profile">
 
     <!-- Profile Header Section -->
     <androidx.cardview.widget.CardView
         android:id="@+id/profile_header_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="336dp"
+        android:layout_height="94dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
@@ -27,56 +28,55 @@
             android:padding="16dp">
 
             <!-- Profile Section (Left) -->
+
+            <!-- Logout Button (Right) -->
+
             <LinearLayout
                 android:id="@+id/profile_info_container"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="180dp"
+                android:layout_height="68dp"
                 android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_logout"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btn_logout"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintVertical_bias="0.0">
 
                 <TextView
-                    android:id="@+id/txt_profile_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Profile"
-                    android:textColor="@android:color/white"
-                    android:textSize="22sp" />
-
-                <TextView
-                    android:id="@+id/txt_student_name"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/txtStudentName"
+                    android:layout_width="213dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Hat Dog"
                     android:textColor="@android:color/white"
-                    android:textSize="18sp" />
+                    android:textSize="24sp"
+                    tools:text="John Doe" />
 
                 <TextView
-                    android:id="@+id/txt_student_number"
+                    android:id="@+id/txtStudentNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:fontFamily="sans-serif"
-                    android:text="Student #: 2023-12345"
                     android:textColor="#E0E0E0"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    tools:text="Student #: 2019-00001" />
+
             </LinearLayout>
 
-            <!-- Logout Button (Right) -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="107dp"
+                android:layout_height="41dp"
+                android:layout_marginTop="12dp"
                 android:text="Logout"
                 android:textColor="@android:color/white"
-                app:backgroundTint="#555555"
+                app:backgroundTint="#C6180D"
                 app:cornerRadius="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -103,11 +103,11 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/txt_notifications_title"
+                android:id="@+id/txtReservationsTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="Reservation Status"
+                android:text="My Reservations"
                 android:textColor="@android:color/white"
                 android:textSize="22sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -119,174 +119,67 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:fontFamily="sans-serif"
-                android:text="Stay updated with your reservations"
+                android:text="Reservation Status"
                 android:textColor="#E0E0E0"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_notifications_title" />
+                app:layout_constraintTop_toBottomOf="@+id/txtReservationsTitle" />
 
-            <ImageButton
-                android:id="@+id/btn_mark_all_read"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Mark all as read"
-                android:src="@android:drawable/ic_menu_edit"
-                android:tint="@color/white"
+            <Spinner
+                android:id="@+id/spinnerFilter"
+                android:layout_width="136dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="64dp"
+                android:backgroundTint="@color/white"
+                android:textColor="#FFFEFE"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.691"
+                app:layout_constraintStart_toEndOf="@+id/txtReservationsTitle"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
     <!-- Filter Section -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/filter_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:cardBackgroundColor="@android:color/white"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_card">
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
+    <!-- Reservations List -->
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
+    <!-- Empty State Message -->
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="All"
-                    app:chipBackgroundColor="#3a4f24"
-                    app:chipIconVisible="false"
-                    app:chipMinHeight="32dp"
-                    app:chipStrokeWidth="0dp"
-                    app:textEndPadding="12dp"
-                    app:textStartPadding="12dp" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_uniforms"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="Uniforms"
-                    app:chipBackgroundColor="#E0E0E0"
-                    app:chipIconVisible="false"
-                    app:chipMinHeight="32dp"
-                    app:chipStrokeWidth="0dp"
-                    app:textEndPadding="12dp"
-                    app:textStartPadding="12dp" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_books"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="Books"
-                    app:chipBackgroundColor="#E0E0E0"
-                    app:chipIconVisible="false"
-                    app:chipMinHeight="32dp"
-                    app:chipStrokeWidth="0dp"
-                    app:textEndPadding="12dp"
-                    app:textStartPadding="12dp" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_modules"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="Modules"
-                    app:chipBackgroundColor="#E0E0E0"
-                    app:chipIconVisible="false"
-                    app:chipMinHeight="32dp"
-                    app:chipStrokeWidth="0dp"
-                    app:textEndPadding="12dp"
-                    app:textStartPadding="12dp" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Status"
-                    app:chipBackgroundColor="#E0E0E0"
-                    app:chipIconVisible="false"
-                    app:chipMinHeight="32dp"
-                    app:chipStrokeWidth="0dp"
-                    app:textEndPadding="12dp"
-                    app:textStartPadding="12dp" />
-
-            </LinearLayout>
-        </HorizontalScrollView>
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Notifications List - MODIFIED to be smaller and account for bottom navigation -->
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginTop="8dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewReservations"
+        android:layout_width="333dp"
+        android:layout_height="414dp"
         android:clipToPadding="false"
         android:paddingBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filter_card"/>
+        app:layout_constraintTop_toBottomOf="@+id/header_card"
+        app:layout_constraintVertical_bias="0.058" />
 
-    <!-- Empty State - Set to gone since we have dummy data -->
-    <LinearLayout
-        android:id="@+id/empty_state"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textNoReservations"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical"
-        android:padding="32dp"
+        android:text="No reservations found"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Loading Indicator -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filter_card">
-
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:alpha="0.5"
-            android:src="@android:drawable/ic_dialog_info" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="sans-serif-medium"
-            android:text="No reservations yet"
-            android:textColor="#3a4f24"
-            android:textSize="18sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:text="When you make reservations, they will appear here"
-            android:textColor="#757575"
-            android:textSize="14sp" />
-
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Space for Bottom Navigation -->
     <Space

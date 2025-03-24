@@ -8,7 +8,7 @@
     android:layout_marginVertical="6dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
-    app:strokeColor="@color/stroke_light"
+    app:strokeColor="@color/icon_tint"
     app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,8 +18,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/bookImage"
-            android:layout_width="77dp"
-            android:layout_height="106dp"
+            android:layout_width="69dp"
+            android:layout_height="92dp"
             android:layout_marginStart="4dp"
             android:contentDescription="Book cover"
             android:scaleType="centerCrop"
@@ -58,17 +58,19 @@
             app:layout_constraintStart_toStartOf="@+id/bookTitle"
             app:layout_constraintTop_toBottomOf="@+id/bookTitle" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/availabilityChip"
+        <!-- Updated Availability Text -->
+        <TextView
+            android:id="@+id/availabilityText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
             android:text="5 copies available"
             android:textColor="@color/success_text"
             android:textSize="12sp"
-            app:chipBackgroundColor="@color/success_bg"
-            app:chipIcon="@drawable/ic_check_circle"
-            app:chipIconTint="@color/success_icon"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/departmentCourse"
             app:layout_constraintTop_toBottomOf="@+id/departmentCourse" />
 
@@ -80,20 +82,23 @@
             app:dividerColor="@color/divider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/bookTitle"
-            app:layout_constraintTop_toBottomOf="@+id/availabilityChip" />
+            app:layout_constraintTop_toBottomOf="@+id/availabilityText" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/reserveButton"
             style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="184dp"
-            android:layout_height="42dp"
-            android:layout_marginTop="4dp"
+            android:layout_width="284dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="12dp"
             android:text="Add to Cart"
+            android:textColor="@color/white"
             android:textSize="14sp"
-            app:backgroundTint="@color/button_primary"
+            app:backgroundTint="@color/button"
             app:cornerRadius="8dp"
+            app:icon="@drawable/cart_icon"
             app:iconGravity="textStart"
             app:iconSize="18dp"
+            app:iconTint="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"

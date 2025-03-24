@@ -28,7 +28,7 @@ class ModulesAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModuleViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.module_item, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.item_module, parent, false)
         return ModuleViewHolder(view)
     }
 

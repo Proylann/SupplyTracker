@@ -77,13 +77,14 @@
                 android:contentDescription="Search"
                 android:padding="8dp"
                 android:src="@android:drawable/ic_menu_search" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/uniformsRecyclerView"
-        android:layout_width="347dp"
-        android:layout_height="419dp"
+        android:layout_width="345dp"
+        android:layout_height="460dp"
         android:clipToPadding="false"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"

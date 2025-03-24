@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.glide)
     implementation(libs.material.v1110)
     implementation(libs.logging.interceptor)
     implementation(libs.imageslideshow)

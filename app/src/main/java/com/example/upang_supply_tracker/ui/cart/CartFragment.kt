@@ -6,15 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.upang_supply_tracker.Adapters.CartAdapter
 import com.example.upang_supply_tracker.R
 import com.example.upang_supply_tracker.databinding.FragmentCartBinding
-import com.example.upang_supply_tracker.models.CartItem
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AlertDialog
 
 class CartFragment : Fragment() {
 
@@ -85,20 +86,16 @@ class CartFragment : Fragment() {
         cartViewModel.cartItems.observe(viewLifecycleOwner) { items ->
             cartAdapter.updateData(items)
 
-            // Update UI based on cart state
             if (items.isEmpty()) {
                 binding.emptyCartLayout.visibility = View.VISIBLE
                 binding.cartContentLayout.visibility = View.GONE
             } else {
                 binding.emptyCartLayout.visibility = View.GONE
                 binding.cartContentLayout.visibility = View.VISIBLE
-
-                // Update item count
                 binding.itemCountText.text = "${items.size} item(s)"
             }
         }
 
-        // Observe loading state
         cartViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.checkoutButton.isEnabled = !isLoading
@@ -106,7 +103,6 @@ class CartFragment : Fragment() {
             binding.clearCartButton.isEnabled = !isLoading
         }
 
-        // Observe reservation status
         cartViewModel.reservationStatus.observe(viewLifecycleOwner) { status ->
             if (!status.isNullOrEmpty()) {
                 Snackbar.make(binding.root, status, Snackbar.LENGTH_LONG).show()
@@ -116,7 +112,6 @@ class CartFragment : Fragment() {
 
     private fun setupListeners() {
         binding.checkoutButton.setOnClickListener {
-            // Implement checkout logic
             cartViewModel.checkoutCart()
         }
 
@@ -137,60 +132,57 @@ class CartFragment : Fragment() {
             return
         }
 
-        // Create a summary of items grouped by type
-        val uniformItems = items.filter { it.itemType == "UNIFORM" }
-        val bookItems = items.filter { it.itemType == "BOOK" }
-        val moduleItems = items.filter { it.itemType == "MODULE" }
+        val dialogView = layoutInflater.inflate(R.layout.order_summary_dialog, null)
+        val orderDetailsTextView = dialogView.findViewById<TextView>(R.id.orderDetailsTextView)
+        val confirmButton = dialogView.findViewById<Button>(R.id.confirmButton)
+        val cancelButton = dialogView.findViewById<Button>(R.id.cancelButton)
 
-        // Build the summary message
-        val summaryBuilder = StringBuilder()
-        summaryBuilder.append("Order Summary\n\n")
-
-        // Add a section for each item type if present
-        if (uniformItems.isNotEmpty()) {
-            summaryBuilder.append("UNIFORMS:\n")
-            uniformItems.forEachIndexed { index, item ->
-                summaryBuilder.append("${index + 1}. ${item.name} - ${item.departmentName}\n")
-            }
-            summaryBuilder.append("\n")
+        val summaryBuilder = StringBuilder("Order Summary\n\n")
+        items.forEachIndexed { index, item ->
+            summaryBuilder.append("${index + 1}. ${item.name} - ${item.departmentName}\n")
         }
+        summaryBuilder.append("\nTotal Items: ${items.size}")
+        orderDetailsTextView.text = summaryBuilder.toString()
 
-        if (bookItems.isNotEmpty()) {
-            summaryBuilder.append("BOOKS:\n")
-            bookItems.forEachIndexed { index, item ->
-                val courseInfo = if (item.courseName.isNullOrEmpty()) "" else " - ${item.courseName}"
-                summaryBuilder.append("${index + 1}. ${item.name}${courseInfo}\n")
-            }
-            summaryBuilder.append("\n")
-        }
+        val alertDialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
 
-        if (moduleItems.isNotEmpty()) {
-            summaryBuilder.append("MODULES:\n")
-            moduleItems.forEachIndexed { index, item ->
-                val courseInfo = if (item.courseName.isNullOrEmpty()) "" else " - ${item.courseName}"
-                summaryBuilder.append("${index + 1}. ${item.name}${courseInfo}\n")
-            }
-            summaryBuilder.append("\n")
-        }
+        confirmButton.setOnClickListener {
+            alertDialog.dismiss()
+            cartViewModel.checkoutCart()
 
-        summaryBuilder.append("Total Items: ${items.size}")
-
-        // Show the MaterialAlertDialog
-        context?.let {
-            MaterialAlertDialogBuilder(it)
-                .setTitle("Reservation Summary")
-                .setMessage(summaryBuilder.toString())
-                .setPositiveButton("Proceed to Checkout") { dialog, _ ->
-                    dialog.dismiss()
-                    // Only call the checkout action when the user explicitly confirms
-                    cartViewModel.checkoutCart()
+            cartViewModel.reservationStatus.observe(viewLifecycleOwner) { status ->
+                if (status == "Reservation submitted successfully") {
+                    showThankYouDialog()
+                } else {
+                    Snackbar.make(binding.root, status, Snackbar.LENGTH_LONG).show()
                 }
-                .setNegativeButton("Edit Order") { dialog, _ ->
-                    dialog.dismiss()
-                    // Do nothing, just close the dialog
-                }
-                .show()
+            }
         }
+
+        cancelButton.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
+    }
+
+    private fun showThankYouDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.thanks_dialog, null)
+        val closeButton = dialogView.findViewById<Button>(R.id.closeButton)
+
+        val alertDialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        closeButton.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
     }
 
     override fun onDestroyView() {
