@@ -38,7 +38,7 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.material.v1110)
     implementation(libs.logging.interceptor)
     implementation(libs.imageslideshow)
     implementation(libs.converter.gson)

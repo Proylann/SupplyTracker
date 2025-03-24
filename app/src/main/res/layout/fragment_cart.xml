@@ -34,6 +34,17 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Empty cart state -->
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Cart with items -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -205,6 +216,7 @@
 
         </androidx.cardview.widget.CardView>
 
+
         <!-- Checkout button -->
         <androidx.cardview.widget.CardView
             android:id="@+id/checkoutCard"
@@ -221,6 +233,20 @@
                 android:padding="16dp">
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/summaryButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="View Order Summary"
+                    android:textAllCaps="false"
+                    app:backgroundTint="@color/button_primary"
+                    app:cornerRadius="8dp"
+                    app:layout_constraintBottom_toTopOf="@+id/checkoutButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/checkoutButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -231,11 +257,10 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/summaryButton" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.upang_supply_tracker.BottomNavigation
 import com.example.upang_supply_tracker.R
 import com.example.upang_supply_tracker.Services.CartService
+import com.example.upang_supply_tracker.Services.UserManager
 import com.example.upang_supply_tracker.backend.ApiService
 import com.example.upang_supply_tracker.backend.RetrofitClient
 import com.example.upang_supply_tracker.dataclass.Student
@@ -92,14 +93,23 @@ class Login : AppCompatActivity() {
                         val message = jsonResponse.optString("message", "")
 
                         if (success) {
-                            // Save student number in CartService
+                            // Save student number in CartService if needed
                             CartService.getInstance().saveStudentNumber(loginStudent.studentNumber)
+
+                            // Initialize UserManager
+                            UserManager.initialize(applicationContext)
+                            val userManager = UserManager.getInstance()
+
+                            // Login with the Student object directly
+                            userManager.login(loginStudent)
 
                             Toast.makeText(
                                 this@Login,
                                 "Login successful!",
                                 Toast.LENGTH_LONG
                             ).show()
+
+
 
                             // Navigate to main activity
                             val intent = Intent(this@Login, BottomNavigation::class.java)
