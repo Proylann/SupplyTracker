@@ -6,27 +6,20 @@ import java.io.Serializable
 data class Module(
     @SerializedName("moduleId")
     val moduleId: Int,
-
     @SerializedName("title")
     val title: String,
-
     @SerializedName("semester")
     val semester: String,
-
     @SerializedName("quantity")
     val quantity: Int,
-
     @SerializedName("departmentId")
     val departmentId: Int,
-
-    @SerializedName("departmentName")
-    val departmentName: String,
-
+    @SerializedName("Name")
+    val Name: String?,
     @SerializedName("courseId")
     val courseId: Int?,
-
-    @SerializedName("courseName")
-    val courseName: String?
+    @SerializedName("CourseName")
+    val courseName: String?,
 ) : Serializable
 
 data class ModuleResponse(

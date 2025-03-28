@@ -29,9 +29,12 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val imageList = ArrayList<SlideModel>().apply {
-            add(SlideModel(R.drawable.polo, ScaleTypes.CENTER_INSIDE))
-            add(SlideModel(R.drawable.polo, ScaleTypes.CENTER_INSIDE))
-            add(SlideModel(R.drawable.polo, ScaleTypes.CENTER_INSIDE))
+            add(SlideModel(R.drawable.cite, ScaleTypes.CENTER_INSIDE))
+            add(SlideModel(R.drawable.ccje, ScaleTypes.CENTER_INSIDE))
+            add(SlideModel(R.drawable.cea, ScaleTypes.CENTER_INSIDE))
+            add(SlideModel(R.drawable.cma, ScaleTypes.CENTER_INSIDE))
+            add(SlideModel(R.drawable.shs, ScaleTypes.CENTER_INSIDE))
+            add(SlideModel(R.drawable.cas, ScaleTypes.CENTER_INSIDE))
         }
 
         binding.imageSlider.setImageList(imageList)

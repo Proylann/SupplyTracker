@@ -1,6 +1,8 @@
 package com.example.upang_supply_tracker.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +33,8 @@ class Modules : Fragment() {
     private lateinit var searchEditText: EditText
     private lateinit var searchButton: ImageButton
 
-    private var modulesList: List<Module> = emptyList()
+    private val modulesList = mutableListOf<Module>()
+    private val filteredModulesList = mutableListOf<Module>()
     private val apiService = RetrofitClient.instance.create(ApiService::class.java)
 
     override fun onCreateView(
@@ -48,7 +51,7 @@ class Modules : Fragment() {
         searchButton = view.findViewById(R.id.searchButton)
 
         setupRecyclerView()
-        setupSearchButton()
+        setupSearch()
         fetchModules()
 
         return view
@@ -58,27 +61,58 @@ class Modules : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         modulesAdapter = ModulesAdapter(
             requireContext(),
-            emptyList(),
+            filteredModulesList,
             onItemClick = { module ->
                 // Handle item click (e.g., navigate to detail screen)
                 Toast.makeText(requireContext(), "Selected: ${module.title}", Toast.LENGTH_SHORT).show()
-            },
-            onReserveClick = { module ->
-                // Handle reserve button click
-                Toast.makeText(requireContext(), "Reserved: ${module.title}", Toast.LENGTH_SHORT).show()
             }
         )
         recyclerView.adapter = modulesAdapter
     }
 
-    private fun setupSearchButton() {
-        searchButton.setOnClickListener {
-            val query = searchEditText.text.toString().trim()
-            if (query.isNotEmpty()) {
-                searchModules(query)
-            } else {
-                modulesAdapter.updateData(modulesList)
+    private fun setupSearch() {
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                filterModules(s.toString())
             }
+        })
+
+        searchButton.setOnClickListener {
+            filterModules(searchEditText.text.toString())
+        }
+    }
+
+    private fun filterModules(query: String) {
+        filteredModulesList.clear()
+
+        if (query.isEmpty()) {
+            filteredModulesList.addAll(modulesList)
+        } else {
+            val searchQuery = query.lowercase()
+            modulesList.forEach { module ->
+                if (module.title.lowercase().contains(searchQuery) ||
+                    (module.courseName ?: "").lowercase().contains(searchQuery) ||
+                    (module.Name ?: "").lowercase().contains(searchQuery)) {
+                    filteredModulesList.add(module)
+                }
+            }
+        }
+
+        modulesAdapter.notifyDataSetChanged()
+        updateEmptyState()
+    }
+
+    private fun updateEmptyState() {
+        if (filteredModulesList.isEmpty()) {
+            emptyStateTextView.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        } else {
+            emptyStateTextView.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
         }
     }
 
@@ -90,78 +124,38 @@ class Modules : Fragment() {
                 showLoading(false)
 
                 if (response.isSuccessful) {
-                    val moduleResponse = response.body()
-                    moduleResponse?.modules?.let { modules ->
-                        if (modules.isNotEmpty()) {
-                            modulesList = modules
-                            modulesAdapter.updateData(modules)
-                            showEmptyState(false)
-                        } else {
-                            showEmptyState(true)
-                        }
-                    } ?: run {
-                        showEmptyState(true)
-                        Toast.makeText(requireContext(), moduleResponse?.error ?: "No modules found", Toast.LENGTH_SHORT).show()
+                    val modules = response.body()?.modules
+                    if (modules != null) {
+                        modulesList.clear()
+                        modulesList.addAll(modules)
+
+                        filteredModulesList.clear()
+                        filteredModulesList.addAll(modulesList)
+
+                        modulesAdapter.notifyDataSetChanged()
+                        updateEmptyState()
                     }
                 } else {
-                    showEmptyState(true)
-                    Toast.makeText(requireContext(), "Failed to load modules", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Failed to fetch modules", Toast.LENGTH_SHORT).show()
+                    updateEmptyState()
                 }
             }
 
             override fun onFailure(call: Call<ModuleResponse>, t: Throwable) {
                 showLoading(false)
-                showEmptyState(true)
-                Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
-    private fun searchModules(query: String) {
-        showLoading(true)
-
-        apiService.searchModules(query).enqueue(object : Callback<ModuleResponse> {
-            override fun onResponse(call: Call<ModuleResponse>, response: Response<ModuleResponse>) {
-                showLoading(false)
-
-                if (response.isSuccessful) {
-                    val moduleResponse = response.body()
-                    moduleResponse?.modules?.let { modules ->
-                        if (modules.isNotEmpty()) {
-                            modulesAdapter.updateData(modules)
-                            showEmptyState(false)
-                        } else {
-                            showEmptyState(true)
-                        }
-                    } ?: run {
-                        showEmptyState(true)
-                    }
-                } else {
-                    showEmptyState(true)
-                    Toast.makeText(requireContext(), "Search failed", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<ModuleResponse>, t: Throwable) {
-                showLoading(false)
-                showEmptyState(true)
-                Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                updateEmptyState()
             }
         })
     }
 
     private fun showLoading(isLoading: Boolean) {
-        loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         if (isLoading) {
+            loadingProgressBar.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
             emptyStateTextView.visibility = View.GONE
         } else {
-            recyclerView.visibility = View.VISIBLE
+            loadingProgressBar.visibility = View.GONE
         }
-    }
-
-    private fun showEmptyState(isEmpty: Boolean) {
-        emptyStateTextView.visibility = if (isEmpty) View.VISIBLE else View.GONE
-        recyclerView.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
 }

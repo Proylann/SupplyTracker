@@ -5,25 +5,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.upang_supply_tracker.R
+import com.example.upang_supply_tracker.Services.CartService
+import com.example.upang_supply_tracker.Services.UserManager
+import com.example.upang_supply_tracker.models.CartItem
 import com.example.upang_supply_tracker.models.Module
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.chip.Chip
 
 class ModulesAdapter(
     private val context: Context,
     private var modules: List<Module>,
-    private val onItemClick: (Module) -> Unit,
-    private val onReserveClick: (Module) -> Unit
+    private val onItemClick: (Module) -> Unit
 ) : RecyclerView.Adapter<ModulesAdapter.ModuleViewHolder>() {
+
+    private val cartService = CartService.getInstance()
+    private val userManager = UserManager.getInstance()
+    private var allModules: List<Module> = modules // Store the original list
 
     class ModuleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titleTextView: TextView = itemView.findViewById(R.id.moduleTitle)
         val courseTextView: TextView = itemView.findViewById(R.id.moduleCourse)
         val departmentTextView: TextView = itemView.findViewById(R.id.moduleDepartment)
         val semesterTextView: TextView = itemView.findViewById(R.id.moduleSemester)
-        val quantityChip: Chip = itemView.findViewById(R.id.moduleQuantity)
+        val quantityTextView: TextView = itemView.findViewById(R.id.quantity)
         val reserveButton: MaterialButton = itemView.findViewById(R.id.reserveButton)
     }
 
@@ -34,33 +40,60 @@ class ModulesAdapter(
 
     override fun onBindViewHolder(holder: ModuleViewHolder, position: Int) {
         val module = modules[position]
+        val currentUser = userManager.getCurrentUser()
+
+        val departmentMap = mapOf(
+            "CAHS" to "6",
+            "CAS" to "9",
+            "CCJE" to "11",
+            "CEA" to "2",
+            "CELA" to "5",
+            "CITE" to "1",
+            "CMA" to "10"
+        )
+
+        val moduleDepartmentID = departmentMap[module.Name] ?: "Unknown"
+        val userDepartmentID = currentUser?.departmentID ?: "Unknown"
+
+        val isEligible = userDepartmentID == moduleDepartmentID
 
         holder.titleTextView.text = module.title
         holder.courseTextView.text = "Course: ${module.courseName ?: "N/A"}"
-        holder.departmentTextView.text = "Department: ${module.departmentName}"
+        holder.departmentTextView.text = "Department: ${module.Name}"
         holder.semesterTextView.text = "Semester: ${module.semester}"
-        holder.quantityChip.text = "Quantity: ${module.quantity}"
 
-        // Set chip color based on quantity
-        if (module.quantity > 0) {
-            holder.quantityChip.setChipBackgroundColorResource(R.color.success_bg)
-            holder.quantityChip.setTextColor(context.getColor(R.color.success_text))
-            holder.quantityChip.setChipIconTintResource(R.color.success_icon)
+        holder.quantityTextView.text = "Quantity: ${module.quantity}"
+
+        if (module.quantity > 0 && isEligible) {
+            holder.quantityTextView.setTextColor(context.getColor(R.color.active))
             holder.reserveButton.isEnabled = true
         } else {
-            holder.quantityChip.setChipBackgroundColorResource(R.color.success_bg)
-            holder.quantityChip.setTextColor(context.getColor(R.color.active))
-            holder.quantityChip.setChipIconTintResource(R.color.text_primary)
+            holder.quantityTextView.setTextColor(context.getColor(R.color.status_pending))
             holder.reserveButton.isEnabled = false
         }
 
-        // Set click listeners
         holder.itemView.setOnClickListener {
             onItemClick(module)
         }
 
         holder.reserveButton.setOnClickListener {
-            onReserveClick(module)
+            val cartItem = CartItem(
+                itemId = module.moduleId,
+                name = module.title,
+                description = "${module.Name} module",
+                departmentName = module.Name ?: "",
+                courseName = module.courseName ?: "",
+                img = null,
+                quantity = 1,
+                itemType = "MODULE"
+            )
+
+            if (module.quantity > 0 && isEligible) {
+                cartService.addToCart(cartItem)
+                Toast.makeText(context, "${module.title} added to cart", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Cannot add module to cart", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -69,19 +102,21 @@ class ModulesAdapter(
     }
 
     fun updateData(newModules: List<Module>) {
+        allModules = newModules // Update the original list
         modules = newModules
         notifyDataSetChanged()
     }
 
     fun filterBySearch(query: String) {
-        if (query.isEmpty()) {
-            return
+        modules = if (query.isEmpty()) {
+            allModules // Restore full list when search is cleared
+        } else {
+            allModules.filter { module ->
+                module.title.contains(query, ignoreCase = true) ||
+                        (module.courseName ?: "").contains(query, ignoreCase = true) ||
+                        (module.Name ?: "").contains(query, ignoreCase = true)
+            }
         }
-        val filteredList = modules.filter {
-            it.title.contains(query, ignoreCase = true) ||
-                    it.courseName?.contains(query, ignoreCase = true) == true ||
-                    it.departmentName.contains(query, ignoreCase = true)
-        }
-        updateData(filteredList)
+        notifyDataSetChanged()
     }
 }

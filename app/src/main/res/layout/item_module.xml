@@ -69,17 +69,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/moduleDepartment" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/moduleQuantity"
+        <TextView
+            android:id="@+id/quantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Quantity: 25"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="5 copies available"
             android:textColor="@color/success_text"
             android:textSize="12sp"
-            app:chipBackgroundColor="@color/success_bg"
-            app:chipIcon="@drawable/ic_check_circle"
-            app:chipIconTint="@color/success_icon"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/moduleSemester" />
 
@@ -91,14 +92,14 @@
             app:dividerColor="@color/divider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/moduleQuantity" />
+            app:layout_constraintTop_toBottomOf="@+id/availabilityText" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/reserveButton"
             style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="356dp"
             android:layout_height="50dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="40dp"
             android:text="Add to Cart"
             android:textColor="@color/white"
             android:textSize="14sp"
@@ -110,7 +111,7 @@
             app:iconTint="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider" />
+            app:layout_constraintTop_toBottomOf="@+id/moduleSemester" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
