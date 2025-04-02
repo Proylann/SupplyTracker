@@ -1,4 +1,4 @@
-package com.example.upang_supply_tracker.models
+package com.example.upang_supply_tracker.dataclass
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
@@ -9,9 +9,6 @@ data class CartItem(
 
     @SerializedName("name")
     val name: String,
-
-    @SerializedName("description")
-    val description: String,
 
     @SerializedName("departmentName")
     val departmentName: String,
@@ -26,5 +23,9 @@ data class CartItem(
     var quantity: Int = 1,
 
     @SerializedName("itemType")
-    val itemType: String  // "BOOK", "UNIFORM", or "MODULE"
+    val itemType: String,  // "BOOK", "UNIFORM", or "MODULE"
+
+    @SerializedName("size")
+    var size: String? = ""  // Default to empty string instead of null
+
 ) : Serializable

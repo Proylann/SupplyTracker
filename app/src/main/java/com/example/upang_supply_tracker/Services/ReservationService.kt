@@ -3,7 +3,7 @@ package com.example.upang_supply_tracker.Services
 import android.util.Log
 import com.example.upang_supply_tracker.backend.ApiService
 import com.example.upang_supply_tracker.backend.RetrofitClient
-import com.example.upang_supply_tracker.models.CartItem
+import com.example.upang_supply_tracker.dataclass.CartItem
 import com.example.upang_supply_tracker.models.Reservation
 import com.example.upang_supply_tracker.models.ReservationRequest
 import com.example.upang_supply_tracker.models.ReservationResponse
@@ -20,15 +20,31 @@ import java.io.IOException
 class ReservationService {
 
     private var apiService = RetrofitClient.instance.create(ApiService::class.java)
+    private lateinit var cartService: CartService
+    private lateinit var reservationValidator: ReservationValidator
+
+    // Track reservations already processed to avoid duplicate markings
+    private val processedReservations = mutableSetOf<Int>()
 
     companion object {
         private var instance: ReservationService? = null
+        private const val TAG = "ReservationService"
 
         fun getInstance(): ReservationService {
             if (instance == null) {
                 instance = ReservationService()
             }
             return instance!!
+        }
+    }
+
+    init {
+        try {
+            cartService = CartService.getInstance()
+            reservationValidator = ReservationValidator.getInstance()
+        } catch (e: IllegalStateException) {
+            // Services may not be initialized yet
+            Log.e(TAG, "Services not initialized: ${e.message}")
         }
     }
 
@@ -39,6 +55,14 @@ class ReservationService {
     ): Result<ReservationResponse> {
         return withContext(Dispatchers.IO) {
             try {
+                // First check if all items can be reserved
+                val alreadyReservedItems = reservationValidator.getAlreadyReservedItems(studentNumber, cartItems)
+
+                if (alreadyReservedItems.isNotEmpty()) {
+                    val itemNames = alreadyReservedItems.joinToString(", ") { it.name }
+                    return@withContext Result.failure(IOException("Cannot reserve. The following items have already been reserved: $itemNames"))
+                }
+
                 val requestData = ReservationRequest(
                     userId = studentNumber,
                     items = cartItems,
@@ -49,13 +73,15 @@ class ReservationService {
 
                 if (response.isSuccessful) {
                     response.body()?.let {
+                        // Mark items as reserved after successful submission
+                        reservationValidator.markItemsAsReserved(studentNumber, cartItems)
                         Result.success(it)
                     } ?: Result.failure(IOException("Empty response body"))
                 } else {
                     Result.failure(IOException("Unexpected response ${response.code()}"))
                 }
             } catch (e: Exception) {
-                Log.e("ReservationService", "Error submitting reservation", e)
+                Log.e(TAG, "Error submitting reservation", e)
                 Result.failure(e)
             }
         }
@@ -84,6 +110,7 @@ class ReservationService {
 
                             for (i in 0 until reservationsArray.length()) {
                                 val reservationObj = reservationsArray.getJSONObject(i)
+                                val reservationId = reservationObj.optInt("id")
 
                                 // Process books
                                 val booksArray = reservationObj.optJSONArray("books") ?: JSONArray()
@@ -91,65 +118,82 @@ class ReservationService {
 
                                 for (j in 0 until booksArray.length()) {
                                     val bookObj = booksArray.getJSONObject(j)
-                                    val bookImageData = bookObj.optString("preview", null)
-                                    Log.d("ReservationService", "Book image data: $bookImageData")
+                                    val imageData = bookObj.optString("preview", null)
+
+                                    Log.d(TAG, "Book image data present: ${!imageData.isNullOrEmpty()}")
+
                                     val cartItem = CartItem(
                                         itemId = bookObj.optInt("id"),
                                         name = bookObj.optString("title", ""),
-                                        description = "",
                                         departmentName = bookObj.optString("departmentId", ""),
                                         courseName = bookObj.optString("courseId", ""),
-                                        img = bookObj.optString("preview", null), // Update to "preview" if that's what your API returns
+                                        img = imageData, // This will be a data URL with base64 encoding
                                         quantity = bookObj.optInt("quantity", 1),
-                                        itemType = "BOOK"
+                                        itemType = "BOOK",
+                                        size = null
                                     )
                                     itemsList.add(cartItem)
+                                    Log.d(TAG, "Added book: ${cartItem.name}, has image: ${!cartItem.img.isNullOrEmpty()}")
                                 }
 
                                 // Process modules
-                                val modulesArray =
-                                    reservationObj.optJSONArray("modules") ?: JSONArray()
+                                val modulesArray = reservationObj.optJSONArray("modules") ?: JSONArray()
                                 for (j in 0 until modulesArray.length()) {
                                     val moduleObj = modulesArray.getJSONObject(j)
+                                    val imageData = moduleObj.optString("preview", null)
+
+                                    Log.d(TAG, "Module image data present: ${!imageData.isNullOrEmpty()}")
+
                                     val cartItem = CartItem(
                                         itemId = moduleObj.optInt("id"),
                                         name = moduleObj.optString("title", ""),
-                                        description = "",
                                         departmentName = moduleObj.optString("departmentId", ""),
                                         courseName = moduleObj.optString("courseId", ""),
-                                        img = moduleObj.optString("preview", null), // Update field name if different
+                                        img = imageData, // This will be a data URL with base64 encoding
                                         quantity = moduleObj.optInt("quantity", 1),
-                                        itemType = "MODULE"
+                                        itemType = "MODULE",
+                                        size = null
                                     )
                                     itemsList.add(cartItem)
+                                    Log.d(TAG, "Added module: ${cartItem.name}, has image: ${!cartItem.img.isNullOrEmpty()}")
                                 }
 
                                 // Process uniforms
-                                val uniformsArray =
-                                    reservationObj.optJSONArray("uniforms") ?: JSONArray()
+                                val uniformsArray = reservationObj.optJSONArray("uniforms") ?: JSONArray()
                                 for (j in 0 until uniformsArray.length()) {
                                     val uniformObj = uniformsArray.getJSONObject(j)
+                                    val imageData = uniformObj.optString("img", null)
+
+                                    Log.d(TAG, "Uniform image data present: ${!imageData.isNullOrEmpty()}")
+
                                     val cartItem = CartItem(
                                         itemId = uniformObj.optInt("id"),
                                         name = uniformObj.optString("name", ""),
-                                        description = uniformObj.optString("description", ""),
                                         departmentName = uniformObj.optString("departmentId", ""),
                                         courseName = uniformObj.optString("courseId", ""),
-                                        img = uniformObj.optString("img", null), // Your Uniform model has "img" field
+                                        img = imageData, // This will be a data URL with base64 encoding
                                         quantity = uniformObj.optInt("quantity", 1),
-                                        itemType = "UNIFORM"
+                                        itemType = "UNIFORM",
+                                        size = uniformObj.optString("size", "")
                                     )
                                     itemsList.add(cartItem)
+                                    Log.d(TAG, "Added uniform: ${cartItem.name}, size: ${cartItem.size}, has image: ${!cartItem.img.isNullOrEmpty()}")
                                 }
-
                                 val reservation = Reservation(
-                                    id = reservationObj.optInt("id"),
+                                    id = reservationId,
                                     date = reservationObj.optString("date"),
                                     status = reservationObj.optString("status"),
                                     items = itemsList
                                 )
 
                                 reservationsList.add(reservation)
+
+                                // Only mark items as reserved if we haven't processed this reservation before
+                                if (::reservationValidator.isInitialized && !processedReservations.contains(reservationId)) {
+                                    reservationValidator.markItemsAsReserved(studentNumber, itemsList)
+                                    processedReservations.add(reservationId)
+                                    Log.d(TAG, "Marked reservation #$reservationId as processed")
+                                }
                             }
 
                             onSuccess(reservationsList)
@@ -159,6 +203,7 @@ class ReservationService {
                             onError(message)
                         }
                     } catch (e: Exception) {
+                        Log.e(TAG, "Error parsing response", e)
                         onError("Error parsing response: ${e.message}")
                     }
                 } else {
@@ -167,8 +212,32 @@ class ReservationService {
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.e(TAG, "Network failure", t)
                 onError("Network error: ${t.message}")
             }
         })
+    }
+
+    fun updateReservationStatus(
+        studentNumber: String,
+        reservationId: Int,
+        newStatus: String,
+        items: List<CartItem>,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        if (newStatus.equals("CANCELLED", ignoreCase = true) && ::reservationValidator.isInitialized) {
+            reservationValidator.removeReservedItems(studentNumber, items)
+            // Remove from processed set when cancelled
+            processedReservations.remove(reservationId)
+            onSuccess()
+        } else {
+            // Implement your API call here
+            onSuccess() // Placeholder
+        }
+    }
+
+    fun clearProcessedReservations() {
+        processedReservations.clear()
     }
 }

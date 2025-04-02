@@ -1,38 +1,42 @@
 package com.example.upang_supply_tracker.ui.cart
 
-import android.util.Log
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.upang_supply_tracker.Services.CartService
-import com.example.upang_supply_tracker.Services.UserManager
-import com.example.upang_supply_tracker.models.CartItem
 import com.example.upang_supply_tracker.Services.ReservationService
+import com.example.upang_supply_tracker.Services.UserManager
+import com.example.upang_supply_tracker.dataclass.CartItem
 import kotlinx.coroutines.launch
 
-class CartViewModel : ViewModel() {
+class CartViewModel(application: Application) : AndroidViewModel(application) {
+
     private val cartService = CartService.getInstance()
     private val reservationService = ReservationService.getInstance()
     private val userManager = UserManager.getInstance()
 
-    // Expose the cart items LiveData from the service
+    // LiveData
     val cartItems: LiveData<List<CartItem>> = cartService.cartItemsLiveData
+    val errorMessage: LiveData<String> = cartService.errorMessage
 
-    // Status message for UI feedback
+    private val _isLoading = MutableLiveData<Boolean>(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+
     private val _reservationStatus = MutableLiveData<String>()
     val reservationStatus: LiveData<String> = _reservationStatus
 
-    // Loading state for UI
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
-
-    fun updateQuantity(uniformId: Int, quantity: Int) {
-        cartService.updateQuantity(uniformId, quantity)
+    fun updateQuantity(itemId: Int, quantity: Int) {
+        cartService.updateQuantity(itemId, quantity)
     }
 
-    fun removeFromCart(uniformId: Int) {
-        cartService.removeFromCart(uniformId)
+    fun updateSize(itemId: Int, size: String) {
+        cartService.updateSize(itemId, size)
+    }
+
+    fun removeFromCart(itemId: Int) {
+        cartService.removeFromCart(itemId)
     }
 
     fun clearCart() {
@@ -40,37 +44,40 @@ class CartViewModel : ViewModel() {
     }
 
     fun checkoutCart() {
-        val items = cartItems.value ?: return
+        val items = cartService.getCartItems()
         if (items.isEmpty()) {
-            _reservationStatus.value = "Cart is empty"
+            _reservationStatus.value = "Your cart is empty"
             return
         }
 
-        val currentStudent = userManager.getCurrentUser()
-        if (currentStudent == null) {
-            _reservationStatus.value = "User not logged in"
+        val studentNumber = userManager.getCurrentUserId()
+        if (studentNumber.isEmpty()) {
+            _reservationStatus.value = "Please log in to continue"
+            return
+        }
+
+        // First validate that all items can be reserved
+        if (!cartService.validateCartForCheckout()) {
+            // Error message is set by CartService
             return
         }
 
         _isLoading.value = true
-
         viewModelScope.launch {
-            val result = reservationService.submitReservation(currentStudent.studentNumber, items)
+            val result = reservationService.submitReservation(studentNumber, items)
+            _isLoading.value = false
 
-            if (result.isSuccess) {
-                val response = result.getOrNull()
-                if (response?.success == true) {
-                    _reservationStatus.postValue("Reservation submitted successfully")
-                    clearCart()
-                } else {
-                    _reservationStatus.postValue("Error: ${response?.message ?: "Unknown error"}")
+            result.fold(
+                onSuccess = {
+                    _reservationStatus.value = "Reservation submitted successfully"
+                    // After successful reservation, mark items in cart as reserved
+                    cartService.markCartItemsAsReserved()
+                    cartService.clearCart()
+                },
+                onFailure = {
+                    _reservationStatus.value = "Failed to submit reservation: ${it.message}"
                 }
-            } else {
-                _reservationStatus.postValue("Network error: ${result.exceptionOrNull()?.message ?: "Unknown error"}")
-                Log.e("CheckoutError", result.exceptionOrNull()?.message ?: "Unknown error")
-            }
-
-            _isLoading.postValue(false)
+            )
         }
     }
 }

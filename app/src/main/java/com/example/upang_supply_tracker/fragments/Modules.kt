@@ -11,11 +11,13 @@ import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.upang_supply_tracker.Adapters.ModulesAdapter
 import com.example.upang_supply_tracker.R
+import com.example.upang_supply_tracker.Services.UserManager
 import com.example.upang_supply_tracker.backend.ApiService
 import com.example.upang_supply_tracker.backend.RetrofitClient
 import com.example.upang_supply_tracker.models.Module
@@ -32,10 +34,24 @@ class Modules : Fragment() {
     private lateinit var emptyStateTextView: TextView
     private lateinit var searchEditText: EditText
     private lateinit var searchButton: ImageButton
+    private lateinit var departmentFilterSwitch: SwitchCompat
+    private lateinit var departmentFilterLabel: TextView
 
     private val modulesList = mutableListOf<Module>()
     private val filteredModulesList = mutableListOf<Module>()
     private val apiService = RetrofitClient.instance.create(ApiService::class.java)
+
+    private var isDepartmentFilterEnabled = true // Set to true by default
+
+    private val departmentMap = mapOf(
+        "CAHS" to "6",
+        "CAS" to "9",
+        "CCJE" to "11",
+        "CEA" to "2",
+        "CELA" to "5",
+        "CITE" to "1",
+        "CMA" to "10"
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,12 +65,33 @@ class Modules : Fragment() {
         emptyStateTextView = view.findViewById(R.id.emptyStateTextView)
         searchEditText = view.findViewById(R.id.searchEditText)
         searchButton = view.findViewById(R.id.searchButton)
+        departmentFilterSwitch = view.findViewById(R.id.departmentFilterSwitch)
+        departmentFilterLabel = view.findViewById(R.id.departmentFilterLabel)
 
         setupRecyclerView()
         setupSearch()
+        setupDepartmentFilter()
         fetchModules()
 
         return view
+    }
+
+    private fun setupDepartmentFilter() {
+        val currentUser = UserManager.getInstance().getCurrentUser()
+        val userDepartmentID = currentUser?.departmentID
+        val departmentName = departmentMap.entries.find { it.value == userDepartmentID }?.key ?: "your department"
+
+        departmentFilterLabel.text = "Show only $departmentName modules"
+        departmentFilterSwitch.isChecked = true // Toggle ON by default
+
+        departmentFilterSwitch.setOnCheckedChangeListener { _, isChecked ->
+            isDepartmentFilterEnabled = isChecked
+            filterModules(searchEditText.text.toString())
+
+            if (isChecked) {
+                Toast.makeText(context, "Showing only $departmentName modules", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -88,17 +125,23 @@ class Modules : Fragment() {
 
     private fun filterModules(query: String) {
         filteredModulesList.clear()
+        val searchQuery = query.lowercase()
+        val currentUser = UserManager.getInstance().getCurrentUser()
+        val userDepartmentID = currentUser?.departmentID
 
-        if (query.isEmpty()) {
-            filteredModulesList.addAll(modulesList)
-        } else {
-            val searchQuery = query.lowercase()
-            modulesList.forEach { module ->
-                if (module.title.lowercase().contains(searchQuery) ||
+        modulesList.forEach { module ->
+            val matchesSearch = query.isEmpty() ||
+                    module.title.lowercase().contains(searchQuery) ||
                     (module.courseName ?: "").lowercase().contains(searchQuery) ||
-                    (module.Name ?: "").lowercase().contains(searchQuery)) {
-                    filteredModulesList.add(module)
-                }
+                    (module.Name ?: "").lowercase().contains(searchQuery)
+
+            // Assuming Module has a departmentID or similar field
+            // Modify this to match your actual Module data structure
+            val moduleDeptId = departmentMap[module.Name ?: ""]
+            val matchesDepartment = !isDepartmentFilterEnabled || moduleDeptId == userDepartmentID
+
+            if (matchesSearch && matchesDepartment) {
+                filteredModulesList.add(module)
             }
         }
 
@@ -108,6 +151,16 @@ class Modules : Fragment() {
 
     private fun updateEmptyState() {
         if (filteredModulesList.isEmpty()) {
+            emptyStateTextView.text = when {
+                isDepartmentFilterEnabled -> {
+                    val departmentName = UserManager.getInstance().getCurrentUser()?.departmentID?.let { id ->
+                        departmentMap.entries.find { it.value == id }?.key
+                    } ?: "your department"
+                    "No modules available for $departmentName"
+                }
+                searchEditText.text.isNotEmpty() -> "No modules match your search"
+                else -> "No modules available"
+            }
             emptyStateTextView.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
         } else {
@@ -128,12 +181,7 @@ class Modules : Fragment() {
                     if (modules != null) {
                         modulesList.clear()
                         modulesList.addAll(modules)
-
-                        filteredModulesList.clear()
-                        filteredModulesList.addAll(modulesList)
-
-                        modulesAdapter.notifyDataSetChanged()
-                        updateEmptyState()
+                        filterModules(searchEditText.text.toString())
                     }
                 } else {
                     Toast.makeText(context, "Failed to fetch modules", Toast.LENGTH_SHORT).show()

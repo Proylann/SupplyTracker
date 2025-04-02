@@ -13,6 +13,9 @@ data class Uniform(
     @SerializedName("description")
     val description: String,
 
+    @SerializedName("size")
+    val size: String? = "",  // Added size field
+
     @SerializedName("quantity")
     val quantity: Int,
 

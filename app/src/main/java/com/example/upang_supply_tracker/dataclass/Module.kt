@@ -20,6 +20,10 @@ data class Module(
     val courseId: Int?,
     @SerializedName("CourseName")
     val courseName: String?,
+
+    @SerializedName("imageData")
+    val imageData: String? = null
+
 ) : Serializable
 
 data class ModuleResponse(

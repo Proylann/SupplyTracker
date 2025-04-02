@@ -58,17 +58,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo" />
 
-    <TextView
-        android:id="@+id/loginNav"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="Click Here"
-        android:textColor="#0640A9"
-        android:textColorLink="#0256E4"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/btnSubmit" />
+
 
 
     <TextView
@@ -134,5 +124,17 @@
         app:layout_constraintHorizontal_bias="0.622"
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="-5dp" />
+
+    <TextView
+        android:id="@+id/RegisterNav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Click Here"
+        android:textColor="#0640A9"
+        android:textColorLink="#0256E4"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubmit" /> />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

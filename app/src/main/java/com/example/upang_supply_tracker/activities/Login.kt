@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.upang_supply_tracker.BottomNavigation
@@ -25,6 +26,7 @@ class Login : AppCompatActivity() {
     private lateinit var studentNumberEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var submitButton: Button
+    private lateinit var RegisterNav: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,12 +39,24 @@ class Login : AppCompatActivity() {
         studentNumberEditText = findViewById(R.id.StudentNumber)
         passwordEditText = findViewById(R.id.Password)
         submitButton = findViewById(R.id.btnSubmit)
-
+        RegisterNav = findViewById(R.id.RegisterNav)
         // Set click listener for submit button
+
         submitButton.setOnClickListener {
             validateAndLogin()
         }
+
+
+        RegisterNav.setOnClickListener{
+        val intent = Intent(this, Register::class.java)
+            startActivity(intent)
+
+        }
+
     }
+
+
+
 
     private fun validateAndLogin() {
         val studentNumber = studentNumberEditText.text.toString().trim()

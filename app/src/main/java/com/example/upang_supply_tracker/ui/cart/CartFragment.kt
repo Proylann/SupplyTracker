@@ -51,6 +51,10 @@ class CartFragment : Fragment() {
             onRemoveClick = { uniformId ->
                 cartViewModel.removeFromCart(uniformId)
                 Snackbar.make(binding.root, "Item removed from cart", Snackbar.LENGTH_SHORT).show()
+            },
+            onSizeChange = { itemId, size ->
+                cartViewModel.updateSize(itemId, size)
+                Snackbar.make(binding.root, "Size updated to $size", Snackbar.LENGTH_SHORT).show()
             }
         )
 
@@ -155,6 +159,7 @@ class CartFragment : Fragment() {
 
             cartViewModel.reservationStatus.observe(viewLifecycleOwner) { status ->
                 if (status == "Reservation submitted successfully") {
+
                     showThankYouDialog()
                 } else {
                     Snackbar.make(binding.root, status, Snackbar.LENGTH_LONG).show()

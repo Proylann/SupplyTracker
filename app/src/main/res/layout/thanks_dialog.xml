@@ -21,12 +21,13 @@
         android:id="@+id/noteText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="We will notify you once your order is ready to claim."
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:gravity="center"
         android:layout_gravity="center_horizontal"
-        android:paddingTop="10dp" />
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:text="
+ You may Track your Reservation Status at Profile Section"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/closeButton"

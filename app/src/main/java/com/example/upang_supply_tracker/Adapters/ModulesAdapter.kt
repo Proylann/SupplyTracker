@@ -1,18 +1,22 @@
-package com.example.upang_supply_tracker.Adapters
+package com.example.upang_supply_tracker.Adapters;
 
-import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
-import androidx.recyclerview.widget.RecyclerView
-import com.example.upang_supply_tracker.R
-import com.example.upang_supply_tracker.Services.CartService
-import com.example.upang_supply_tracker.Services.UserManager
-import com.example.upang_supply_tracker.models.CartItem
-import com.example.upang_supply_tracker.models.Module
-import com.google.android.material.button.MaterialButton
+import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.upang_supply_tracker.R;
+import com.example.upang_supply_tracker.Services.CartService;
+import com.example.upang_supply_tracker.Services.ReservationValidator;
+import com.example.upang_supply_tracker.Services.UserManager;
+import com.example.upang_supply_tracker.dataclass.CartItem;
+import com.example.upang_supply_tracker.models.Module;
+import com.google.android.material.button.MaterialButton;
 
 class ModulesAdapter(
     private val context: Context,
@@ -25,6 +29,7 @@ class ModulesAdapter(
     private var allModules: List<Module> = modules // Store the original list
 
     class ModuleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val moduleImageView: ImageView = itemView.findViewById(R.id.moduleImageView)
         val titleTextView: TextView = itemView.findViewById(R.id.moduleTitle)
         val courseTextView: TextView = itemView.findViewById(R.id.moduleCourse)
         val departmentTextView: TextView = itemView.findViewById(R.id.moduleDepartment)
@@ -57,19 +62,52 @@ class ModulesAdapter(
 
         val isEligible = userDepartmentID == moduleDepartmentID
 
+        // Check if module is already in cart
+        val isInCart = cartService.isItemInCart(module.moduleId, "MODULE")
+
+        // Set basic module information
         holder.titleTextView.text = module.title
         holder.courseTextView.text = "Course: ${module.courseName ?: "N/A"}"
         holder.departmentTextView.text = "Department: ${module.Name}"
         holder.semesterTextView.text = "Semester: ${module.semester}"
-
         holder.quantityTextView.text = "Quantity: ${module.quantity}"
 
-        if (module.quantity > 0 && isEligible) {
+        // Set module image from Base64 string
+        if (!module.imageData.isNullOrEmpty()) {
+            try {
+                // Convert Base64 to Bitmap
+                val imageBytes = Base64.decode(module.imageData, Base64.DEFAULT)
+                val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                holder.moduleImageView.setImageBitmap(decodedImage)
+            } catch (e: Exception) {
+                // Set default image if decoding fails
+                holder.moduleImageView.setImageResource(R.drawable.module_icon)
+            }
+        } else {
+            // Set default image if no image data available
+            holder.moduleImageView.setImageResource(R.drawable.module_icon)
+        }
+
+        // Set availability color and button state
+        if (module.quantity <= 0) {
+            holder.quantityTextView.setTextColor(context.getColor(R.color.status_pending))
+            holder.reserveButton.setBackgroundColor(context.getColor(R.color.text_secondary))
+            holder.reserveButton.isEnabled = false
+            holder.reserveButton.text = "Out of Stock"
+        } else if (!isEligible) {
+            holder.quantityTextView.setTextColor(context.getColor(R.color.status_pending)) // Red color
+            holder.reserveButton.isEnabled = false
+            holder.reserveButton.text = "Not Available for Your Dept."
+            holder.reserveButton.setBackgroundColor(context.getColor(R.color.status_pending))
+        } else if (isInCart) {
+            holder.quantityTextView.setTextColor(context.getColor(R.color.active))
+            holder.reserveButton.setBackgroundColor(context.getColor(R.color.gray))
+            holder.reserveButton.isEnabled = false
+            holder.reserveButton.text = "Already in Cart"
+        } else {
             holder.quantityTextView.setTextColor(context.getColor(R.color.active))
             holder.reserveButton.isEnabled = true
-        } else {
-            holder.quantityTextView.setTextColor(context.getColor(R.color.status_pending))
-            holder.reserveButton.isEnabled = false
+            holder.reserveButton.text = "Add to Cart"
         }
 
         holder.itemView.setOnClickListener {
@@ -77,20 +115,40 @@ class ModulesAdapter(
         }
 
         holder.reserveButton.setOnClickListener {
-            val cartItem = CartItem(
-                itemId = module.moduleId,
-                name = module.title,
-                description = "${module.Name} module",
-                departmentName = module.Name ?: "",
-                courseName = module.courseName ?: "",
-                img = null,
-                quantity = 1,
-                itemType = "MODULE"
-            )
+            if (module.quantity > 0 && isEligible && !isInCart) {
+                val cartItem = CartItem(
+                    itemId = module.moduleId,
+                    name = module.title,
+                    departmentName = module.Name ?: "",
+                    courseName = module.courseName ?: "",
+                    img = module.imageData, // Pass the image data to the cart
+                    quantity = 1,
+                    itemType = "MODULE",
+                    size = null  // Since modules don't have sizes, use null
+                )
 
-            if (module.quantity > 0 && isEligible) {
-                cartService.addToCart(cartItem)
-                Toast.makeText(context, "${module.title} added to cart", Toast.LENGTH_SHORT).show()
+                // Get current student ID from UserManager
+                val studentId = userManager.getCurrentUser()?.studentNumber ?: ""
+
+                // Check if this item can be reserved
+                val reservationValidator = ReservationValidator.getInstance()
+                if (!reservationValidator.canReserveItem(studentId, cartItem)) {
+                    Toast.makeText(
+                        context,
+                        "You have already reserved this module",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    val result = cartService.addToCart(cartItem)
+                    if (result) {
+                        Toast.makeText(context, "${module.title} added to cart", Toast.LENGTH_SHORT).show()
+                        // Update button state immediately
+                        holder.reserveButton.isEnabled = false
+                        holder.reserveButton.text = "Already in Cart"
+                    } else {
+                        Toast.makeText(context, "Failed to add to cart", Toast.LENGTH_SHORT).show()
+                    }
+                }
             } else {
                 Toast.makeText(context, "Cannot add module to cart", Toast.LENGTH_SHORT).show()
             }

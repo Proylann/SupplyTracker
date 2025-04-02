@@ -1,5 +1,6 @@
 package com.example.upang_supply_tracker.models
 
+import com.example.upang_supply_tracker.dataclass.CartItem
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
