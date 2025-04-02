@@ -2,6 +2,7 @@ package com.example.upang_supply_tracker.Services
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.example.upang_supply_tracker.dataclass.CartItem
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -12,6 +13,7 @@ import com.google.gson.reflect.TypeToken
 class ReservationValidator private constructor(context: Context) {
     private val sharedPreferences: SharedPreferences
     private val gson = Gson()
+    private val TAG = "ReservationValidator"
 
     // Map to store reserved items by user ID
     // Key: Student Number, Value: Set of reserved item IDs with type
@@ -87,10 +89,17 @@ class ReservationValidator private constructor(context: Context) {
         val jsonReservedItems = sharedPreferences.getString(KEY_RESERVED_ITEMS, null)
 
         if (!jsonReservedItems.isNullOrEmpty()) {
-            val type = object : TypeToken<Map<String, MutableSet<String>>>() {}.type
-            val loadedMap: Map<String, MutableSet<String>> = gson.fromJson(jsonReservedItems, type)
-            reservedItemsMap.clear()
-            reservedItemsMap.putAll(loadedMap)
+            try {
+                val type = object : TypeToken<Map<String, MutableSet<String>>>() {}.type
+                val loadedMap: Map<String, MutableSet<String>> = gson.fromJson(jsonReservedItems, type)
+                reservedItemsMap.clear()
+                reservedItemsMap.putAll(loadedMap)
+                Log.d(TAG, "Loaded reservation data: ${reservedItemsMap.size} users with reservations")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error loading reservation data: ${e.message}")
+                // If there's an error loading, clear the data to prevent issues
+                sharedPreferences.edit().remove(KEY_RESERVED_ITEMS).apply()
+            }
         }
     }
 
@@ -100,11 +109,27 @@ class ReservationValidator private constructor(context: Context) {
     private fun saveReservedItems() {
         val jsonReservedItems = gson.toJson(reservedItemsMap)
         sharedPreferences.edit().putString(KEY_RESERVED_ITEMS, jsonReservedItems).apply()
+        Log.d(TAG, "Saved reservation data: ${reservedItemsMap.size} users with reservations")
     }
 
+    /**
+     * Clear all reservation records
+     */
     fun clearAllReservationRecords() {
         reservedItemsMap.clear()
         sharedPreferences.edit().remove(KEY_RESERVED_ITEMS).apply()
+        Log.d(TAG, "Cleared all reservation records")
+    }
+
+    /**
+     * Clear all reservation records for a specific user
+     */
+    fun clearUserReservations(studentId: String) {
+        val wasRemoved = reservedItemsMap.remove(studentId) != null
+        if (wasRemoved) {
+            saveReservedItems()
+            Log.d(TAG, "Cleared reservation records for user: $studentId")
+        }
     }
 
     /**
@@ -124,5 +149,12 @@ class ReservationValidator private constructor(context: Context) {
         }
 
         saveReservedItems()
+    }
+
+    /**
+     * For debugging - get the number of items reserved by a user
+     */
+    fun getReservedItemCount(studentId: String): Int {
+        return reservedItemsMap[studentId]?.size ?: 0
     }
 }

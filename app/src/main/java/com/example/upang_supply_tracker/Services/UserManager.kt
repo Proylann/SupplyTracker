@@ -2,10 +2,12 @@ package com.example.upang_supply_tracker.Services
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.example.upang_supply_tracker.dataclass.Student
 
 class UserManager private constructor(context: Context) {
     private val sharedPrefs: SharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    private val TAG = "UserManager"
 
     companion object {
         private var instance: UserManager? = null
@@ -24,6 +26,11 @@ class UserManager private constructor(context: Context) {
     private var currentUser: Student? = null
 
     fun login(student: Student) {
+        // Check if this is a different user from the previously logged in user
+        val previousUserId = getCurrentUserId()
+        val newUserId = student.studentNumber
+
+        // Update current user
         currentUser = student
 
         // Save to SharedPreferences
@@ -34,6 +41,32 @@ class UserManager private constructor(context: Context) {
             putString("course_id", student.courseID)
             putBoolean("is_logged_in", true)
             apply()
+        }
+
+        // Clear reservation data if user changed
+        if (previousUserId != newUserId) {
+            try {
+                // Clear any previous reservation data for this user
+                ReservationValidator.getInstance().clearUserReservations(student.studentNumber)
+
+                // Also clear processed reservations in the reservation service
+                ReservationService.getInstance().clearProcessedReservations()
+
+                // Reload actual reservations from server
+                ReservationService.getInstance().getReservations(
+                    student.studentNumber,
+                    onSuccess = { /* Reservations loaded automatically */ },
+                    onError = { errorMsg ->
+                        Log.e(TAG, "Failed to load user reservations: $errorMsg")
+                    }
+                )
+
+                Log.d(TAG, "Cleared previous reservation data for new user login: $newUserId")
+            } catch (e: IllegalStateException) {
+                Log.e(TAG, "Services not initialized: ${e.message}")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error clearing reservation data: ${e.message}")
+            }
         }
     }
 
@@ -53,6 +86,21 @@ class UserManager private constructor(context: Context) {
     }
 
     fun logout() {
+        try {
+            // Clear reservation data for current user
+            currentUser?.studentNumber?.let { studentId ->
+                ReservationValidator.getInstance().clearUserReservations(studentId)
+            }
+
+            // Clear processed reservations
+            ReservationService.getInstance().clearProcessedReservations()
+        } catch (e: IllegalStateException) {
+            Log.e(TAG, "Services not initialized: ${e.message}")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error clearing reservation data: ${e.message}")
+        }
+
+        // Clear user data
         currentUser = null
         with(sharedPrefs.edit()) {
             clear()
